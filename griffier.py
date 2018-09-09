@@ -7,8 +7,7 @@ from utils.error_handler import CommandErrorHandler
 from utils.utilities import Utils
 from cogs.private_channels import PrivateChannels
 
-
-token = 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
+token = ''
 prefix = '//'
 
 
@@ -34,11 +33,11 @@ class Griffier():
         await bot.logout()
 
     @commands.group(name='update')
+    @commands.is_owner()
     async def update(self, context):
         pass
 
     @update.command(name='avatar')
-    @commands.is_owner()
     async def avatar(self, context, url: str):
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
@@ -55,8 +54,19 @@ class Griffier():
         else:
             await context.message.add_reaction('\U0001F44D')
 
+    @update.command(name='username')
+    async def _username(self, context, *, username: str):
+        try:
+            await self._name(name=username)
+        except discord.HTTPException:
+            await context.send('Failed to change name. Remember that you can '
+                               'only do it up to 2 times an hour.'
+                               )
+        else:
+            await context.send('Done.')
 
-bot = commands.Bot(command_prefix=prefix, game=discord.Game(name='NPO Polertiek'))
+
+bot = commands.Bot(command_prefix=prefix, activity=discord.Activity(name='NPO Polertiek', type=discord.ActivityType.watching))
 
 # Data manager and stuff...
 utils = Utils(bot)
