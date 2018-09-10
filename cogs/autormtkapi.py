@@ -42,7 +42,10 @@ class AutoRMTKAPI:
 
             self.utils.settings['AutoRMTKAPI']['roles'] = roles
 
-            self.autormtk_roles = self.utils.settings['AutoRMTKAPI']['token']
+            self.autormtk_roles = self.utils.settings['AutoRMTKAPI']['roles']
             self.utils.save_settings()
 
-        await context.message.add_reaction('\U0001F44D')
+            await context.message.add_reaction('\U0001F44D')
+
+        else:
+            await context.send('\'{}\' heeft al bevoegdheden gekregen!'.format(rol.name))

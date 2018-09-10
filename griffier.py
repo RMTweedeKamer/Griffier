@@ -53,11 +53,10 @@ class Griffier():
         try:
             await context.bot.user.edit(avatar=data)
         except discord.HTTPException:
-            await context.send('Failed. Remember that you can edit my avatar '
-                               'up to two times a hour. The URL must be a '
-                               'direct link to a JPG / PNG.')
+            await context.send('Het veranderen van de afbeelding is mislukt. Je kunt de afbeelding '
+                               'slechts 2 keer per uur veranderen.')
         except discord.InvalidArgument:
-            await context.send('JPG / PNG format only.')
+            await context.send('Alleen JPG of PNG formaat.')
         else:
             await context.message.add_reaction('\U0001F44D')
 
@@ -67,8 +66,8 @@ class Griffier():
         try:
             await self._name(name=username)
         except discord.HTTPException:
-            await context.send('Failed to change name. Remember that you can '
-                               'only do it up to 2 times an hour.')
+            await context.send('Kon de gebruikersnaam niet veranderen. Je kunt maar '
+                               '2 keer per uur de gebruikersnaam veranderen.')
         else:
             await context.message.add_reaction('\U0001F44D')
 
