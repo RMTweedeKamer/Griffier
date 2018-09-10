@@ -1,13 +1,17 @@
+# Discord
 import discord
-import asyncio
 from discord.ext import commands
+
+# Derde partij
 import aiohttp
 
+# Laad alle cogs
 from utils.error_handler import CommandErrorHandler
 from utils.utilities import Utils
 from cogs.private_channels import PrivateChannels
+from cogs.autormtkapi import AutoRMTKAPI
 
-token = ''
+token = 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
 prefix = '//'
 
 
@@ -24,21 +28,24 @@ class Griffier():
 
     @commands.command(name='ping')
     async def ping(self, context):
+        '''Stuur een ping-pong balletje'''
         await context.message.add_reaction('\U0001F3D3')
 
-    @commands.command(name='shutdown')
+    @commands.command(name='afsluiten', aliases=['shutdown'])
     @commands.is_owner()
     async def shutdown_bot(self, context):
+        '''Sluit Griffier af'''
         await context.message.add_reaction('\U0001F44D')
         await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
     async def update(self, context):
-        pass
+        '''Werk de bot bij'''
 
-    @update.command(name='avatar')
+    @update.command(name='afbeelding', aliases=['avatar'])
     async def avatar(self, context, url: str):
+        '''Verander de afbeelding van Griffier'''
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
                 data = await r.read()
@@ -54,28 +61,31 @@ class Griffier():
         else:
             await context.message.add_reaction('\U0001F44D')
 
-    @update.command(name='username')
+    @update.command(name='gebruikersnaam', aliases=['username'])
     async def _username(self, context, *, username: str):
+        '''Verander de gebruikersnaam van Griffier'''
         try:
             await self._name(name=username)
         except discord.HTTPException:
             await context.send('Failed to change name. Remember that you can '
-                               'only do it up to 2 times an hour.'
-                               )
+                               'only do it up to 2 times an hour.')
         else:
-            await context.send('Done.')
+            await context.message.add_reaction('\U0001F44D')
 
 
-bot = commands.Bot(command_prefix=prefix, activity=discord.Activity(name='NPO Polertiek', type=discord.ActivityType.watching))
+bot = commands.Bot(command_prefix=prefix,
+                   activity=discord.Activity(name='NPO Polertiek',
+                                             type=discord.ActivityType.watching))
 
-# Data manager and stuff...
+# Data manager en zo...
 utils = Utils(bot)
 
-# Utils
+# De bot
 bot.add_cog(Griffier(bot))
 bot.add_cog(CommandErrorHandler(bot))
 
-# Cogs
+# Laad cogs
 bot.add_cog(PrivateChannels(bot, utils))
+bot.add_cog(AutoRMTKAPI(bot, utils))
 
 bot.run(token)
