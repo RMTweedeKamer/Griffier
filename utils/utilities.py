@@ -18,5 +18,5 @@ class Utils:
             data = json.load(f)
         return data
 
-    async def _save_settings(self):
+    def save_settings(self):
         self.save_json(self.settings_file, self.settings)
