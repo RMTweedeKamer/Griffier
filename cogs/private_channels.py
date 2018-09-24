@@ -29,7 +29,7 @@ class PrivateChannels:
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
-    @privatechannel.command(name='open', aliases=['new'])
+    @privatechannel.command(name='prive', aliases=['private'])
     async def privatechannel_new_channel(self, context, *, channel_name: str):
         '''Open een nieuw private kanaal'''
         if self.offtopic_category:
@@ -40,6 +40,26 @@ class PrivateChannels:
                 guild.default_role: discord.PermissionOverwrite(read_messages=False),
                 guild.me: discord.PermissionOverwrite(read_messages=True),
                 context.author: discord.PermissionOverwrite(read_messages=True)
+            }
+
+            category = discord.utils.get(guild.categories,
+                                         id=self.offtopic_category)
+
+            await guild.create_text_channel(channel_name,
+                                            category=category,
+                                            overwrites=overwrites)
+            await context.message.add_reaction('\U0001F44D')
+
+    @privatechannel.command(name='publiek', aliases=['public'])
+    async def privatechannel_new_public_channel(self, context, *, channel_name: str):
+        '''Open een nieuw publiek kanaal'''
+        if self.offtopic_category:
+            guild = context.guild
+            channel_name = channel_name.replace(' ', '-')
+
+            overwrites = {
+                guild.default_role: discord.PermissionOverwrite(read_messages=True, send_messages=True),
+                guild.me: discord.PermissionOverwrite(read_messages=True),
             }
 
             category = discord.utils.get(guild.categories,
