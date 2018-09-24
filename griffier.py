@@ -71,7 +71,7 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
-token = ''
+token = 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
 prefix = '//'
 
 bot = commands.Bot(command_prefix=prefix,
