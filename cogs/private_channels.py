@@ -57,12 +57,13 @@ class PrivateChannels:
                                               read_messages=True)
         await context.message.add_reaction('\U0001F44D')
 
-    @privatechannel.command(name='schop', aliases=['kick'])
-    async def privatechannel_kick_from_channel(self, context, member: discord.Member):
-        '''Schop iemand uit het private kanaal'''
-        await context.channel.set_permissions(member,
-                                              read_messages=False)
-        await context.message.add_reaction('\U0001F44D')
+    # Kleuters...
+    # @privatechannel.command(name='schop', aliases=['kick'])
+    # async def privatechannel_kick_from_channel(self, context, member: discord.Member):
+    #    '''Schop iemand uit het private kanaal'''
+    #    await context.channel.set_permissions(member,
+    #                                          read_messages=False)
+    #    await context.message.add_reaction('\U0001F44D')
 
     @privatechannel.command(name='verlaat', aliases=['leave'])
     async def privatechannel_leave_from_channel(self, context):
