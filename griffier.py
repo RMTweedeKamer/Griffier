@@ -9,10 +9,9 @@ import aiohttp
 from utils.error_handler import CommandErrorHandler
 from utils.utilities import Utils
 from cogs.private_channels import PrivateChannels
-from cogs.autormtkapi import AutoRMTKAPI
-
-token = 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
-prefix = '//'
+# from cogs.autormtkapi import AutoRMTKAPI
+from cogs.aankondigingen import Aankondigingen
+from cogs.groeter import Groeter
 
 
 class Griffier():
@@ -35,13 +34,13 @@ class Griffier():
     @commands.is_owner()
     async def shutdown_bot(self, context):
         '''Sluit Griffier af'''
-        await context.message.add_reaction('\U0001F44D')
+        await context.send('Deze zitting is gesloten.')
         await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
     async def update(self, context):
-        '''Werk de bot bij'''
+        '''De bot bijwerken'''
 
     @update.command(name='afbeelding', aliases=['avatar'])
     async def avatar(self, context, url: str):
@@ -64,13 +63,16 @@ class Griffier():
     async def _username(self, context, *, username: str):
         '''Verander de gebruikersnaam van Griffier'''
         try:
-            await self._name(name=username)
+            await self.bot.user.edit(name=username)
         except discord.HTTPException:
             await context.send('Kon de gebruikersnaam niet veranderen. Je kunt maar '
                                '2 keer per uur de gebruikersnaam veranderen.')
         else:
             await context.message.add_reaction('\U0001F44D')
 
+
+token = ''
+prefix = '//'
 
 bot = commands.Bot(command_prefix=prefix,
                    activity=discord.Activity(name='NPO Polertiek',
@@ -85,6 +87,8 @@ bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
 bot.add_cog(PrivateChannels(bot, utils))
-bot.add_cog(AutoRMTKAPI(bot, utils))
+# bot.add_cog(AutoRMTKAPI(bot, utils))
+bot.add_cog(Aankondigingen(bot, utils))
+bot.add_cog(Groeter(bot, utils))
 
 bot.run(token)
