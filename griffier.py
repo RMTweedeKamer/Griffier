@@ -78,8 +78,8 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
-token = 'NDk4MTA4MjIxMTgyMDUwMzE0.Dpo7gA.k36WuQUxeqp430LJzh5b7jOPU74'  # 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
-host_id = 77147428305768448
+token = ''
+host_id =
 prefix = '//'
 
 bot = commands.Bot(command_prefix=prefix,
