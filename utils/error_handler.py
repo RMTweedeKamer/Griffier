@@ -50,11 +50,6 @@ class CommandErrorHandler:
             except:
                 pass
 
-        # For this error example we check to see where it came from...
-        elif isinstance(error, commands.BadArgument):
-            if ctx.command.qualified_name == 'tag list':  # Check if the command being invoked is 'tag list'
-                return await ctx.send('I could not find that member. Please try again.')
-
         # All other Errors not returned come here... And we can just print the default TraceBack.
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)

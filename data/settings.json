@@ -1,1 +1,73 @@
-{}
+{
+    "AutoRMTKAPI" : {
+        "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJib3QiOnRydWV9.7o_2X2TmdB7KsekamugJmZKrd4zXDsTwZAiHMFSeycvfsqXFNTM20Ew6LWusNWt3ngpU5Q2Uy7oRXkH_0B3xXw"
+    },
+    "aankondigingen" : {
+        "client_id" : null,
+        "client_secret" : null,
+        "entries" : [
+            "9eq5gj",
+            "9emi5j",
+            "9eeb0p",
+            "9d9nss",
+            "9d9mh8",
+            "9cn0dn",
+            "9cmzui",
+            "9c1yhd",
+            "9bmgfd",
+            "9bc5l0",
+            "9bc3ni",
+            "9aza5v",
+            "9ahlee",
+            "99dcqs",
+            "99777j",
+            "9f1iku",
+            "9fa99o",
+            "9fjjfe",
+            "9eeda0",
+            "98st00",
+            "98sq7f",
+            "9gceq6",
+            "9g0d8x",
+            "9gmshy",
+            "9i7yqb",
+            "9i7izj",
+            "9hyl2i",
+            "9hsga5",
+            "9ibigk",
+            "9igk4e",
+            "9jpywl",
+            "9jvdeh",
+            "9k7nq5",
+            "9lphaj",
+            "9luu7i",
+            "9lv13a"
+        ],
+        "mededeling_kanaal" : 488380801877278750,
+        "stemmingen_kanaal" : 488381338869825536
+    },
+    "custom_channels" : {
+        "category" : 488363835217018881,
+        "private_channels" : [
+            493458408494596096,
+            493457474440134688,
+            493408055468228628,
+            493473583604039712
+        ],
+        "public_channels" : [
+            496827700439285780,
+            493881490699059230,
+            493876173374357535,
+            488410153004171264,
+            495707202716172293,
+            495677770706321418,
+            488380624994828309,
+            493457026672885792,
+            493450339903864832
+        ]
+    },
+    "groeter" : {
+        "bericht" : "Hallo {member.mention}! Welkom op de offici\u00eble Discord van RMTK.  Neem een kopje koffie en kijk gerust even rond. Als je vragen hebt kun je ze stellen in <#488370077117317130>.",
+        "kanaal" : 488361175038427137
+    }
+}
