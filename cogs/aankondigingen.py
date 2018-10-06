@@ -44,8 +44,8 @@ class Aankondigingen:
                          'mededeling_kanaal': self.utils.settings['aankondigingen']['mededeling_kanaal']
                         }
 
-        client_id = ''
-        client_secret = ''
+        client_id = 'xBtJB0-uZBsEDQ'
+        client_secret = 'gbcQeXIszJFAjjiY3JYP-ptedkQ'
 
         self.subreddit = 'rmtk'
 
@@ -87,13 +87,8 @@ class Aankondigingen:
                         if str(submission.link_flair_text) in self.flairs_normal:
                             shortlink = submission.shortlink
                             title = submission.title
-                            text = submission.selftext.split('---')
 
                             title = title.split(':')
-
-                            body = '\n'.join([line for line in text[0].splitlines() if not line.startswith('##')])
-                            body = body if len(body) < 1200 else body[0:1200] + '...'
-
                             event = self.flairs_normal[str(submission.link_flair_text)]
                             channel = self.bot.get_channel(self.channels[event['channel']])
                             if len(title) > 1:
@@ -102,7 +97,6 @@ class Aankondigingen:
                                 title = title[0]
                             embed = discord.Embed(title=title,
                                                   url=shortlink,
-                                                  description=body,
                                                   color=discord.Color(int(event['color'], 16)))
                             await channel.send(embed=embed)
 
@@ -114,17 +108,12 @@ class Aankondigingen:
                         elif str(submission.link_flair_text) in self.flairs_stemmingen:
                             shortlink = submission.shortlink
                             title = submission.title
-                            text = submission.selftext
-
-                            body = text
-                            body = body if len(body) < 1200 else body[0:1200] + '...'
 
                             event = self.flairs_stemmingen[str(submission.link_flair_text)]
                             channel = self.bot.get_channel(self.channels[event['channel']])
 
                             embed = discord.Embed(title=title,
                                                   url=shortlink,
-                                                  description=body,
                                                   color=discord.Color(int(event['color'], 16)))
 
                             await channel.send(embed=embed)
@@ -137,17 +126,12 @@ class Aankondigingen:
                         elif str(submission.link_flair_text) in self.flairs_resultaten:
                             shortlink = submission.shortlink
                             title = submission.title
-                            text = submission.selftext
-
-                            body = text
-                            body = body if len(body) < 1200 else body[0:1200] + '...'
 
                             event = self.flairs_resultaten[str(submission.link_flair_text)]
                             channel = self.bot.get_channel(self.channels[event['channel']])
 
                             embed = discord.Embed(title=title,
                                                   url=shortlink,
-                                                  description=body,
                                                   color=discord.Color(int(event['color'], 16)))
 
                             await channel.send(embed=embed)

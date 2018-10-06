@@ -8,15 +8,22 @@ import aiohttp
 # Laad alle cogs
 from utils.error_handler import CommandErrorHandler
 from utils.utilities import Utils
-from cogs.private_channels import PrivateChannels
+from cogs.customchannels import CustomChannels
 # from cogs.autormtkapi import AutoRMTKAPI
 from cogs.aankondigingen import Aankondigingen
 from cogs.groeter import Groeter
 
 
 class Griffier():
-    def __init__(self, bot):
+    def __init__(self, bot, host_id, utils):
         self.bot = bot
+        self.host_id = host_id
+        self.utils = utils
+
+    async def on_command_error(self, context, error):
+        if isinstance(error, commands.UserInputError):
+            await context.send('```{}```'.format(error))
+            await self.utils.send_cmd_help(context)
 
     async def on_ready(self):
         print('Ingelogd als')
@@ -31,11 +38,11 @@ class Griffier():
         await context.message.add_reaction('\U0001F3D3')
 
     @commands.command(name='afsluiten', aliases=['shutdown'])
-    @commands.is_owner()
     async def shutdown_bot(self, context):
         '''Sluit Griffier af'''
-        await context.send('Deze zitting is gesloten.')
-        await bot.logout()
+        if context.author.id == self.host_id:
+            await context.send('Deze zitting is gesloten.')
+            await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
@@ -71,7 +78,8 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
-token = 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
+token = 'NDk4MTA4MjIxMTgyMDUwMzE0.Dpo7gA.k36WuQUxeqp430LJzh5b7jOPU74'  # 'NDg4NDAxNTUyNjcxNzY4NTc3.Dnbskw.HWrVe7Wy_ZaOrBBHCQQlapZODb8'
+host_id = 77147428305768448
 prefix = '//'
 
 bot = commands.Bot(command_prefix=prefix,
@@ -82,11 +90,11 @@ bot = commands.Bot(command_prefix=prefix,
 utils = Utils(bot)
 
 # De bot
-bot.add_cog(Griffier(bot))
+bot.add_cog(Griffier(bot, host_id, utils))
 bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
-bot.add_cog(PrivateChannels(bot, utils))
+bot.add_cog(CustomChannels(bot, utils))
 # bot.add_cog(AutoRMTKAPI(bot, utils))
 bot.add_cog(Aankondigingen(bot, utils))
 bot.add_cog(Groeter(bot, utils))
