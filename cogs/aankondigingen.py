@@ -19,6 +19,8 @@ class Aankondigingen:
             self.utils.settings['aankondigingen']['mededeling_kanaal'] = None
         if 'stemmingen_kanaal' not in self.utils.settings['aankondigingen']:
             self.utils.settings['aankondigingen']['stemmingen_kanaal'] = None
+        if 'media_kanaal' not in self.utils.settings['aankondigingen']:
+            self.utils.settings['aankondigingen']['media_kanaal'] = None
         if 'entries' not in self.utils.settings['aankondigingen']:
             self.utils.settings['aankondigingen']['entries'] = []
 
@@ -31,23 +33,25 @@ class Aankondigingen:
                         'META': {'channel': 'mededeling_kanaal', 'color': 'B9005C'},
                         'PARLEMENT': {'channel': 'mededeling_kanaal', 'color': 'D8C50F'},
                         'DEBAT': {'channel': 'mededeling_kanaal', 'color': 'CD392F'}
-        }
+                        }
         self.flairs_stemmingen = {
                         'EK STEMMING': {'channel': 'stemmingen_kanaal', 'color': '7FD47F'},
                         'TK STEMMING': {'channel': 'stemmingen_kanaal', 'color': '7FD47F'}
-        }
+                        }
         self.flairs_resultaten = {
                         'UITSLAGEN': {'channel': 'stemmingen_kanaal', 'color': '6E7B04'}
-        }
+                        }
         self.channels = {
                          'stemmingen_kanaal': self.utils.settings['aankondigingen']['stemmingen_kanaal'],
-                         'mededeling_kanaal': self.utils.settings['aankondigingen']['mededeling_kanaal']
+                         'mededeling_kanaal': self.utils.settings['aankondigingen']['mededeling_kanaal'],
+                         'media_kanaal': self.utils.settings['aankondigingen']['media_kanaal']
                         }
 
         client_id = 'xBtJB0-uZBsEDQ'
         client_secret = 'gbcQeXIszJFAjjiY3JYP-ptedkQ'
 
         self.subreddit = 'rmtk'
+        self.media_subreddit = 'rmtkmedia'
 
         self.entries = self.utils.settings['aankondigingen']['entries']
 
@@ -61,6 +65,8 @@ class Aankondigingen:
     @commands.is_owner()
     async def aankondiging(self, context):
         '''Instellingen voor aankondigingen'''
+        if not context.invoked_subcommand:
+            await self.utils.send_cmd_help(context)
 
     @aankondiging.command(name='stemmingen')
     async def aankondiging_set_stemmingen(self, context, kanaal: discord.TextChannel):
@@ -78,67 +84,99 @@ class Aankondigingen:
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
+    @aankondiging.command(name='media')
+    async def aankondiging_set_media(self, context, kanaal: discord.TextChannel):
+        '''Stel een kanaal in waar de media berichten moet worden gedeeld'''
+        self.utils.settings['aankondigingen']['media_kanaal'] = kanaal.id
+        self.channels['media_kanaal'] = self.utils.settings['aankondigingen']['media_kanaal']
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
     async def read_feeds(self):
         await asyncio.sleep(10)
         while True:
-            if self.channels['stemmingen_kanaal'] and self.channels['mededeling_kanaal']:
-                for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
-                    if submission.id not in self.entries:
-                        if str(submission.link_flair_text) in self.flairs_normal:
-                            shortlink = submission.shortlink
-                            title = submission.title
-
-                            title = title.split(':')
-                            event = self.flairs_normal[str(submission.link_flair_text)]
-                            channel = self.bot.get_channel(self.channels[event['channel']])
-                            if len(title) > 1:
-                                title = '[{}] {}'.format(title[0], title[1])
+            try:
+                if self.channels['media_kanaal']:
+                    for submission in self.reddit.subreddit(self.media_subreddit).new(limit=5):
+                        if submission.id not in self.entries:
+                            if submission.link_flair_text:
+                                title = '[{}] {}'.format(submission.link_flair_text, submission.title)
                             else:
-                                title = title[0]
-                            embed = discord.Embed(title=title,
-                                                  url=shortlink,
-                                                  color=discord.Color(int(event['color'], 16)))
-                            await channel.send(embed=embed)
+                                title = '{}'.format(submission.title)
 
-                            self.entries.append(submission.id)
-                            self.utils.settings['aankondigingen']['entries'] = self.entries
-                            self.utils.save_settings()
-
-                            await asyncio.sleep(2)
-                        elif str(submission.link_flair_text) in self.flairs_stemmingen:
                             shortlink = submission.shortlink
-                            title = submission.title
 
-                            event = self.flairs_stemmingen[str(submission.link_flair_text)]
-                            channel = self.bot.get_channel(self.channels[event['channel']])
-
-                            embed = discord.Embed(title=title,
-                                                  url=shortlink,
-                                                  color=discord.Color(int(event['color'], 16)))
-
-                            await channel.send(embed=embed)
+                            channel = self.bot.get_channel(self.channels['media_kanaal'])
 
                             self.entries.append(submission.id)
                             self.utils.settings['aankondigingen']['entries'] = self.entries
                             self.utils.save_settings()
 
-                            await asyncio.sleep(2)
-                        elif str(submission.link_flair_text) in self.flairs_resultaten:
-                            shortlink = submission.shortlink
-                            title = submission.title
-
-                            event = self.flairs_resultaten[str(submission.link_flair_text)]
-                            channel = self.bot.get_channel(self.channels[event['channel']])
-
                             embed = discord.Embed(title=title,
                                                   url=shortlink,
-                                                  color=discord.Color(int(event['color'], 16)))
+                                                  color=discord.Color(int('6E7B04', 16)))
 
                             await channel.send(embed=embed)
+                if self.channels['stemmingen_kanaal'] and self.channels['mededeling_kanaal']:
+                    for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
+                        if submission.id not in self.entries:
+                            if str(submission.link_flair_text) in self.flairs_normal:
+                                shortlink = submission.shortlink
+                                title = submission.title
 
-                            self.entries.append(submission.id)
-                            self.utils.settings['aankondigingen']['entries'] = self.entries
-                            self.utils.save_settings()
+                                title = title.split(':')
+                                event = self.flairs_normal[str(submission.link_flair_text)]
+                                channel = self.bot.get_channel(self.channels[event['channel']])
+                                if len(title) > 1:
+                                    title = '[{}] {}'.format(title[0], title[1])
+                                else:
+                                    title = title[0]
+                                embed = discord.Embed(title=title,
+                                                      url=shortlink,
+                                                      color=discord.Color(int(event['color'], 16)))
+                                await channel.send(embed=embed)
 
-                            await asyncio.sleep(2)
+                                self.entries.append(submission.id)
+                                self.utils.settings['aankondigingen']['entries'] = self.entries
+                                self.utils.save_settings()
+
+                                await asyncio.sleep(2)
+                            elif str(submission.link_flair_text) in self.flairs_stemmingen:
+                                shortlink = submission.shortlink
+                                title = submission.title
+
+                                event = self.flairs_stemmingen[str(submission.link_flair_text)]
+                                channel = self.bot.get_channel(self.channels[event['channel']])
+
+                                embed = discord.Embed(title=title,
+                                                      url=shortlink,
+                                                      color=discord.Color(int(event['color'], 16)))
+
+                                await channel.send(embed=embed)
+
+                                self.entries.append(submission.id)
+                                self.utils.settings['aankondigingen']['entries'] = self.entries
+                                self.utils.save_settings()
+
+                                await asyncio.sleep(2)
+                            elif str(submission.link_flair_text) in self.flairs_resultaten:
+                                shortlink = submission.shortlink
+                                title = submission.title
+
+                                event = self.flairs_resultaten[str(submission.link_flair_text)]
+                                channel = self.bot.get_channel(self.channels[event['channel']])
+
+                                embed = discord.Embed(title=title,
+                                                      url=shortlink,
+                                                      color=discord.Color(int(event['color'], 16)))
+
+                                await channel.send(embed=embed)
+
+                                self.entries.append(submission.id)
+                                self.utils.settings['aankondigingen']['entries'] = self.entries
+                                self.utils.save_settings()
+
+                                await asyncio.sleep(2)
+            except Exception:
+                pass
             await asyncio.sleep(10)
