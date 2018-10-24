@@ -1,5 +1,3 @@
-import asyncio
-import praw
 import discord
 from discord.ext import commands
 
@@ -25,6 +23,8 @@ class Groeter:
     @commands.is_owner()
     async def groeter(self, context):
         '''Instellingen voor de groeter'''
+        if not context.invoked_subcommand:
+            await self.utils.send_cmd_help(context)
 
     @groeter.command(name='kanaal')
     async def groeter_set_kanaal(self, context, kanaal: discord.TextChannel):

@@ -44,7 +44,7 @@ class CustomChannels:
         if not context.invoked_subcommand:
             await self.utils.send_cmd_help(context)
 
-    @customchannel.command(name='directory', aliases=['lijst'])
+    @customchannel.command(name='list', aliases=['lijst'])
     async def customchannel_list_directory(self, context):
         '''Laat alle publieke kanalen zien'''
 
