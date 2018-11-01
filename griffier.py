@@ -13,6 +13,9 @@ from cogs.customchannels import CustomChannels
 from cogs.aankondigingen import Aankondigingen
 from cogs.groeter import Groeter
 from cogs.pinner import Pinner
+from cogs.achtbal import Achtbal
+from cogs.zoltar import Zoltar
+from cogs.mute import Mute
 
 
 class Griffier():
@@ -80,7 +83,7 @@ class Griffier():
 
 
 token =
-host_id =
+host_id = 
 prefix = '//'
 
 bot = commands.Bot(command_prefix=prefix,
@@ -100,5 +103,8 @@ bot.add_cog(CustomChannels(bot, utils))
 bot.add_cog(Aankondigingen(bot, utils))
 bot.add_cog(Groeter(bot, utils))
 bot.add_cog(Pinner(bot, utils))
+bot.add_cog(Achtbal(bot, utils))
+bot.add_cog(Zoltar(bot, utils))
+bot.add_cog(Mute(bot, utils))
 
 bot.run(token)

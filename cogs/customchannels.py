@@ -2,6 +2,8 @@ import discord
 from discord.ext import commands
 
 
+# TODO
+
 class CustomChannels:
     def __init__(self, bot, utils):
         self.bot = bot
@@ -38,7 +40,7 @@ class CustomChannels:
             self.private_channels = self.utils.settings['custom_channels']['private_channels']
             self.utils.save_settings()
 
-    @commands.group(name='customchannel', aliases=['cc', 'pk'])
+    @commands.group(name='customchannel', aliases=['cc'])
     async def customchannel(self, context):
         '''Laat gebruikers hun eigen kanalen aanmaken'''
         if not context.invoked_subcommand:
@@ -64,6 +66,16 @@ class CustomChannels:
             member = context.author
             await channel.set_permissions(member,
                                           read_messages=True)
+            await context.message.add_reaction('\U0001F44D')
+
+    @customchannel.command(name='description', aliases=['beschrijving'])
+    async def customchannel_change_description_channel(self, context, *, description: str):
+        '''Verander beschrijving van een kanaal'''
+        channel = context.channel
+        description = ''.join(description)
+        if channel.id in self.public_channels or channel.id in self.private_channels:
+            channel = self.bot.get_channel(channel.id)
+            await channel.edit(topic=description)
             await context.message.add_reaction('\U0001F44D')
 
     @customchannel.command(name='category')
