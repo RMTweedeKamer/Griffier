@@ -71,10 +71,5 @@
     "groeter" : {
         "bericht" : "Hallo {member.mention}! Welkom op de offici\u00eble Discord van RMTK.  Neem een kopje koffie en kijk gerust even rond. Als je vragen hebt kun je ze stellen in <#488370077117317130>.",
         "kanaal" : 488361175038427137
-    },
-
-    "customchannels" : {
-
-
     }
 }
