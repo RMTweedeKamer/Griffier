@@ -66,7 +66,7 @@ class CustomChannels:
             member = context.author
             await channel.set_permissions(member,
                                           read_messages=True)
-            await context.message.add_reaction('\U0001F44D')
+            await context.message.delete_message()
 
     @customchannel.command(name='description', aliases=['beschrijving'])
     async def customchannel_change_description_channel(self, context, *, description: str):
@@ -166,4 +166,4 @@ class CustomChannels:
         member = context.author
         await context.channel.set_permissions(member,
                                               read_messages=False)
-        await context.message.add_reaction('\U0001F44D')
+        await context.message.delete_message()
