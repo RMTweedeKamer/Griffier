@@ -47,6 +47,8 @@
         "stemmingen_kanaal" : 488381338869825536
     },
     "custom_channels" : {
+        "invite_succes" : "{member.mention} is toegevoegd aan het kanaal!",
+        "description_succes" : "De beschrijving van dit kanaal is aangepast.",
         "category" : 488363835217018881,
         "private_channels" : [
             493458408494596096,
@@ -69,5 +71,10 @@
     "groeter" : {
         "bericht" : "Hallo {member.mention}! Welkom op de offici\u00eble Discord van RMTK.  Neem een kopje koffie en kijk gerust even rond. Als je vragen hebt kun je ze stellen in <#488370077117317130>.",
         "kanaal" : 488361175038427137
+    },
+
+    "customchannels" : {
+
+
     }
 }

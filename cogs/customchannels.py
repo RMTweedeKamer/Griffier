@@ -23,6 +23,8 @@ class CustomChannels:
         self.offtopic_category = self.utils.settings['custom_channels']['category']
         self.public_channels = self.utils.settings['custom_channels']['public_channels']
         self.private_channels = self.utils.settings['custom_channels']['private_channels']
+        self.invite_message = self.utils.settings['custom_channels']['invite_succes']
+        self.description_message = self.utils.settings['custom_channels']['description_succes']
 
     async def on_guild_channel_delete(self, channel):
         if channel.id in self.public_channels:
@@ -76,7 +78,8 @@ class CustomChannels:
         if channel.id in self.public_channels or channel.id in self.private_channels:
             channel = self.bot.get_channel(channel.id)
             await channel.edit(topic=description)
-            await context.message.add_reaction('\U0001F44D')
+            await context.channel.send_message(self.description_message)
+            await context.message.delete_message()
 
     @customchannel.command(name='category')
     @commands.is_owner()
@@ -150,7 +153,8 @@ class CustomChannels:
         '''Nodig iemand uit om een private kanaal te betreden'''
         await context.channel.set_permissions(member,
                                               read_messages=True)
-        await context.message.add_reaction('\U0001F44D')
+        await context.channel.send_message(self.invite_message.format(member=member))
+        await context.message.delete_message()
 
     # Kleuters...
     # @privatechannel.command(name='schop', aliases=['kick'])
