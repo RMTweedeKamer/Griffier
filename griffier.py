@@ -99,7 +99,6 @@ bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
 bot.add_cog(CustomChannels(bot, utils))
-# bot.add_cog(AutoRMTKAPI(bot, utils))
 bot.add_cog(Aankondigingen(bot, utils))
 bot.add_cog(Groeter(bot, utils))
 bot.add_cog(Pinner(bot, utils))
