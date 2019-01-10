@@ -12,6 +12,7 @@ from cogs.customchannels import CustomChannels
 # from cogs.autormtkapi import AutoRMTKAPI
 from cogs.aankondigingen import Aankondigingen
 from cogs.groeter import Groeter
+from cogs.starboard import Starboard
 from cogs.pinner import Pinner
 from cogs.achtbal import Achtbal
 from cogs.zoltar import Zoltar
@@ -82,8 +83,8 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
-token =
-host_id = 
+token = 
+host_id =
 prefix = '//'
 
 bot = commands.Bot(command_prefix=prefix,
@@ -102,6 +103,7 @@ bot.add_cog(CustomChannels(bot, utils))
 # bot.add_cog(AutoRMTKAPI(bot, utils))
 bot.add_cog(Aankondigingen(bot, utils))
 bot.add_cog(Groeter(bot, utils))
+bot.add_cog(Starboard(bot, utils))
 bot.add_cog(Pinner(bot, utils))
 bot.add_cog(Achtbal(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
