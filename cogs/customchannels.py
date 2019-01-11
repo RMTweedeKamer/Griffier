@@ -159,8 +159,9 @@ class CustomChannels:
         await context.message.delete()
 
     @customchannel.command(name='set_invite')
+    @commands.is_owner()
     async def customchannel_set_invite_message(self, context, *, message: str):
-        '''Stel een bericht in waarmee de nieuwe gebruikers begroet moeten worden.'''
+        '''Stel een bericht in waarmee de uitgenodigde mensen begroet moeten worden.'''
         self.utils.settings['custom_channels']['invite_message'] = ''.join(message)
         self.invite_message = self.utils.settings['custom_channels']['invite_message']
         self.utils.save_settings()
