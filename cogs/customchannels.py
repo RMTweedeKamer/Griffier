@@ -18,7 +18,7 @@ class CustomChannels:
         if 'private_channels' not in self.utils.settings['custom_channels']:
             self.utils.settings['custom_channels']['private_channels'] = []
         if 'invite_message' not in self.utils.settings['custom_channels']:
-            self.utils.settings['custom_channels']['invite_message'] = None
+            self.utils.settings['custom_channels']['invite_message'] = "{member.mention}, is toegevoegd aan dit kanaal!"
 
         self.utils.save_settings()
 
