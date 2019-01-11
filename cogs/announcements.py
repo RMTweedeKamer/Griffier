@@ -4,6 +4,16 @@ import discord
 from discord.ext import commands
 
 
+class Flair:
+    def __init__(self, flair_type, channel, color):
+        self.type = flair_type
+        self.channel = channel
+        self.color = color
+
+    def color_int(self):
+        return int(self.color, 16)
+
+
 class Announcements:
     def __init__(self, bot, utils):
         self.bot = bot
@@ -26,21 +36,18 @@ class Announcements:
 
         self.utils.save_settings()
 
-        self.flairs_normal = {
-                        'MOTIE': {'channel': 'announcement_channel', 'color': '50004F'},
-                        'WETSVOORSTEL': {'channel': 'announcement_channel', 'color': 'E39088'},
-                        'KAMERSTUK': {'channel': 'announcement_channel', 'color': '048ABF'},
-                        'META': {'channel': 'announcement_channel', 'color': 'B9005C'},
-                        'PARLEMENT': {'channel': 'announcement_channel', 'color': 'D8C50F'},
-                        'DEBAT': {'channel': 'announcement_channel', 'color': 'CD392F'}
-                        }
-        self.flairs_stemmingen = {
-                        'EK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'},
-                        'TK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'}
-                        }
-        self.flairs_resultaten = {
-                        'UITSLAGEN': {'channel': 'vote_channel', 'color': '6E7B04'}
-                        }
+        self.flairs = {
+                    'MOTIE':        Flair(flair_type='normal',  channel='announcement_channel', color='50004F'),
+                    'WETSVOORSTEL': Flair(flair_type='normal',  channel='announcement_channel', color='E39088'),
+                    'KAMERSTUK':    Flair(flair_type='normal',  channel='announcement_channel', color='048ABF'),
+                    'META':         Flair(flair_type='normal',  channel='announcement_channel', color='B9005C'),
+                    'PARLEMENT':    Flair(flair_type='normal',  channel='announcement_channel', color='D8C50F'),
+                    'DEBAT':        Flair(flair_type='normal',  channel='announcement_channel', color='CD392F'),
+                    'EK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
+                    'TK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
+                    'UITSLAGEN':    Flair(flair_type='results', channel='vote_channel', color='6E7B04'),
+                    }
+
         self.channels = {
                          'vote_channel': self.utils.settings['announcements']['vote_channel'],
                          'announcement_channel': self.utils.settings['announcements']['announcement_channel'],
@@ -120,63 +127,35 @@ class Announcements:
                 if self.channels['vote_channel'] and self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
                         if submission.id not in self.entries:
-                            if str(submission.link_flair_text) in self.flairs_normal:
-                                shortlink = submission.shortlink
-                                title = submission.title
-
-                                title = title.split(':')
-                                event = self.flairs_normal[str(submission.link_flair_text)]
-                                channel = self.bot.get_channel(self.channels[event['channel']])
-                                if len(title) > 1:
-                                    title = '[{}] {}'.format(title[0], title[1])
-                                else:
-                                    title = title[0]
-                                embed = discord.Embed(title=title,
-                                                      url=shortlink,
-                                                      color=discord.Color(int(event['color'], 16)))
-                                await channel.send(embed=embed)
-
-                                self.entries.append(submission.id)
-                                self.utils.settings['announcements']['entries'] = self.entries
-                                self.utils.save_settings()
-
-                                await asyncio.sleep(2)
-                            elif str(submission.link_flair_text) in self.flairs_stemmingen:
-                                shortlink = submission.shortlink
-                                title = submission.title
-
-                                event = self.flairs_stemmingen[str(submission.link_flair_text)]
-                                channel = self.bot.get_channel(self.channels[event['channel']])
-
-                                embed = discord.Embed(title=title,
-                                                      url=shortlink,
-                                                      color=discord.Color(int(event['color'], 16)))
-
-                                await channel.send(embed=embed)
-
-                                self.entries.append(submission.id)
-                                self.utils.settings['announcements']['entries'] = self.entries
-                                self.utils.save_settings()
-
-                                await asyncio.sleep(2)
-                            elif str(submission.link_flair_text) in self.flairs_resultaten:
-                                shortlink = submission.shortlink
-                                title = submission.title
-
-                                event = self.flairs_resultaten[str(submission.link_flair_text)]
-                                channel = self.bot.get_channel(self.channels[event['channel']])
-
-                                embed = discord.Embed(title=title,
-                                                      url=shortlink,
-                                                      color=discord.Color(int(event['color'], 16)))
-
-                                await channel.send(embed=embed)
-
-                                self.entries.append(submission.id)
-                                self.utils.settings['announcements']['entries'] = self.entries
-                                self.utils.save_settings()
-
-                                await asyncio.sleep(2)
+                            await self.send_announcement(submission)
             except Exception:
                 pass
             await asyncio.sleep(10)
+
+    async def send_announcement(self, submission):
+        shortlink = submission.shortlink
+        title = submission.title
+        flair = self.flairs[str(submission.link_flair_text)]
+
+        if flair.type == 'normal' and ':' in title:
+            title = title.split(':')
+            title = '[{}] {}'.format(title[0], title[1])
+
+        channel = self.bot.get_channel(self.channels[flair.channel])
+        embed = discord.Embed(title=title,
+                              url=shortlink,
+                              color=discord.Color(flair.color_int()))
+        role_reminders = channel.guild.roles.get('name', 'Reminders')
+        await channel.send(role_reminders.mention())
+        await channel.send(embed=embed)
+
+        self.entries.append(submission.id)
+        self.utils.settings['announcements']['entries'] = self.entries
+        self.utils.save_settings()
+
+        await asyncio.sleep(2)
+
+
+
+
+
