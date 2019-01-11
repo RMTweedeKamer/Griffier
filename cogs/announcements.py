@@ -46,6 +46,7 @@ class Announcements:
                     'EK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
                     'TK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
                     'UITSLAGEN':    Flair(flair_type='results', channel='vote_channel', color='6E7B04'),
+                    'VRAGENUUR':    Flair(flair_type='questions', channel='announcement_channel', color='ADD4D6')
                     }
 
         self.channels = {
