@@ -53,14 +53,9 @@ class Griffier():
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
 
-    @commands.group(name='git')
-    @commands.is_owner()
-    async def git(self, context):
-        '''Update the bot'''
-
-    @git.command(name='dev')
+    @commands.command(name='dev')
     @commands.has_role(name='Developer')
-    async def dev(self, context, url: str):
+    async def dev(self, context):
         '''Update the bot to the dev branch'''
         os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git temp')
         os.system('mv temp/.git code/.git')
