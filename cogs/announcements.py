@@ -99,6 +99,15 @@ class Announcements:
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
+    @commands.command(name='force')
+    @commands.has_any_role('Developer')
+    async def force_update(self, context):
+        '''Send announcements for the last submissions posted to the appropriate channels'''
+        self.entries = []
+        self.utils.settings['announcements']['entries'] = self.entries
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
     async def read_feeds(self):
         await asyncio.sleep(10)
         while True:
@@ -106,7 +115,7 @@ class Announcements:
                 if self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.media_subreddit).new(limit=5):
                         await self.send_announcement(submission, media_submission=True)
-                if self.channels['vote_channel'] and self.channels['media_channel']:
+                if self.channels['vote_channel'] and self.channels['announcement_channel']:
                     for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
                         await self.send_announcement(submission)
             except Exception:
