@@ -1,5 +1,4 @@
 # Defaults
-
 import json
 import os
 
@@ -54,6 +53,19 @@ class Griffier():
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
 
+    @commands.command(name='devupdate')
+    async def dev(self, context):
+        '''Update the bot to the dev branch'''
+        if 'Developer' in [role.name for role in context.author.roles]:
+            message = await context.send('Updating...')
+            os.system('rm -rf development')
+            os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
+            os.system('cd development')
+            await message.edit(content='Restarting...')
+            await bot.logout()
+        else:
+            await context.send('You don\'t have the correct permissions to do this.')
+
     @commands.group(name='update')
     @commands.is_owner()
     async def update(self, context):
@@ -88,12 +100,18 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
+if not os.path.exists('data/settings.json'):
+    with open('data/settings.json', encoding='utf-8', mode='w') as f:
+        f.write(json.dumps({}))
+        f.close()
+
 if not os.path.exists('config.json'):
     with open('config.json', encoding='utf-8', mode='w') as f:
         token = input('token> ')
         host_id = input('member id of hoster> ')
         prefix = input('prefix> ')
         config = json.dumps({'token': token, 'host_id': host_id, 'prefix': prefix})
+        f.write(config)
         f.close()
 
 with open('config.json', encoding='utf-8', mode='r') as f:
