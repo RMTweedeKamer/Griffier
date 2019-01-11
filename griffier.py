@@ -14,11 +14,11 @@ from utils.error_handler import CommandErrorHandler
 from utils.utilities import Utils
 from cogs.customchannels import CustomChannels
 # from cogs.autormtkapi import AutoRMTKAPI
-from cogs.aankondigingen import Aankondigingen
-from cogs.groeter import Groeter
+from cogs.announcements import Announcements
+from cogs.greeter import Greeter
 from cogs.starboard import Starboard
 from cogs.pinner import Pinner
-from cogs.achtbal import Achtbal
+from cogs.eightball import Eightball
 from cogs.zoltar import Zoltar
 from cogs.mute import Mute
 
@@ -135,11 +135,11 @@ bot.add_cog(CommandErrorHandler(bot))
 # Laad cogs
 bot.add_cog(CustomChannels(bot, utils))
 # bot.add_cog(AutoRMTKAPI(bot, utils))
-bot.add_cog(Aankondigingen(bot, utils))
-bot.add_cog(Groeter(bot, utils))
+bot.add_cog(Announcements(bot, utils))
+bot.add_cog(Greeter(bot, utils))
 bot.add_cog(Starboard(bot, utils))
 bot.add_cog(Pinner(bot, utils))
-bot.add_cog(Achtbal(bot, utils))
+bot.add_cog(Eightball(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
 
