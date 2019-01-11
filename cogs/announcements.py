@@ -146,7 +146,7 @@ class Announcements:
             color = flair.color_int()
             for role in channel.guild.roles:
                 if role.name == 'Reminders':
-                    await channel.send(role.mention())
+                    await channel.send(role.mention)
 
         embed = discord.Embed(title=title,
                               url=shortlink,
