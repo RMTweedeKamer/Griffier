@@ -58,7 +58,7 @@ class Griffier():
         '''Update the bot to the dev branch'''
         if 'Developer' in [role.name for role in context.author.roles]:
             message = await context.send('Updating...')
-            os.system('cd ../')
+            os.chdir('../')
             os.system('mkdir temp')
             os.system('cp development/data temp')
             os.system('cp development/config.json temp')
@@ -67,7 +67,7 @@ class Griffier():
             os.system('mkdir development/data')
             os.system('cp temp/data development')
             os.system('cp temp/config development')
-            os.system('cd development')
+            os.chdir('development')
             await message.edit(content='Restarting...')
             await bot.logout()
         else:
