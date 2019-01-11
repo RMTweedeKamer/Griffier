@@ -58,8 +58,15 @@ class Griffier():
         '''Update the bot to the dev branch'''
         if 'Developer' in [role.name for role in context.author.roles]:
             message = await context.send('Updating...')
+            os.system('cd ../')
+            os.system('mkdir temp')
+            os.system('cp development/data temp')
+            os.system('cp development/config.json temp')
             os.system('rm -rf development')
             os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
+            os.system('mkdir development/data')
+            os.system('cp temp/data development')
+            os.system('cp temp/config development')
             os.system('cd development')
             await message.edit(content='Restarting...')
             await bot.logout()
