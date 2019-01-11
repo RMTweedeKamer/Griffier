@@ -56,13 +56,11 @@ class Griffier():
     @commands.command(name='dev')
     async def dev(self, context):
         '''Update the bot to the dev branch'''
-        if 533286011787280405 in [role.id for role in context.member.roles]:
+        if 533286011787280405 in [role.id for role in context.author.roles]:
             message = await context.send('Updating...')
-            os.system('cd ../')
             os.system('rm -rf development')
-            os.system('mkdir development')
+            os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
             os.system('cd development')
-            os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git .')
             message.edit(content='Restarting...')
             await bot.logout()
         else:
