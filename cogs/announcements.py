@@ -4,47 +4,47 @@ import discord
 from discord.ext import commands
 
 
-class Aankondigingen:
+class Announcements:
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
 
-        if 'aankondigingen' not in self.utils.settings:
-            self.utils.settings['aankondigingen'] = {}
-        if 'client_id' not in self.utils.settings['aankondigingen']:
-            self.utils.settings['aankondigingen']['client_id'] = None
-        if 'client_secret' not in self.utils.settings['aankondigingen']:
-            self.utils.settings['aankondigingen']['client_secret'] = None
-        if 'mededeling_kanaal' not in self.utils.settings['aankondigingen']:
-            self.utils.settings['aankondigingen']['mededeling_kanaal'] = None
-        if 'stemmingen_kanaal' not in self.utils.settings['aankondigingen']:
-            self.utils.settings['aankondigingen']['stemmingen_kanaal'] = None
-        if 'media_kanaal' not in self.utils.settings['aankondigingen']:
-            self.utils.settings['aankondigingen']['media_kanaal'] = None
-        if 'entries' not in self.utils.settings['aankondigingen']:
-            self.utils.settings['aankondigingen']['entries'] = []
+        if 'announcements' not in self.utils.settings:
+            self.utils.settings['announcements'] = {}
+        if 'client_id' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['client_id'] = None
+        if 'client_secret' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['client_secret'] = None
+        if 'announcement_channel' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['announcement_channel'] = None
+        if 'vote_channel' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['vote_channel'] = None
+        if 'media_channel' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['media_channel'] = None
+        if 'entries' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['entries'] = []
 
         self.utils.save_settings()
 
         self.flairs_normal = {
-                        'MOTIE': {'channel': 'mededeling_kanaal', 'color': '50004F'},
-                        'WETSVOORSTEL': {'channel': 'mededeling_kanaal', 'color': 'E39088'},
-                        'KAMERSTUK': {'channel': 'mededeling_kanaal', 'color': '048ABF'},
-                        'META': {'channel': 'mededeling_kanaal', 'color': 'B9005C'},
-                        'PARLEMENT': {'channel': 'mededeling_kanaal', 'color': 'D8C50F'},
-                        'DEBAT': {'channel': 'mededeling_kanaal', 'color': 'CD392F'}
+                        'MOTIE': {'channel': 'announcement_channel', 'color': '50004F'},
+                        'WETSVOORSTEL': {'channel': 'announcement_channel', 'color': 'E39088'},
+                        'KAMERSTUK': {'channel': 'announcement_channel', 'color': '048ABF'},
+                        'META': {'channel': 'announcement_channel', 'color': 'B9005C'},
+                        'PARLEMENT': {'channel': 'announcement_channel', 'color': 'D8C50F'},
+                        'DEBAT': {'channel': 'announcement_channel', 'color': 'CD392F'}
                         }
         self.flairs_stemmingen = {
-                        'EK STEMMING': {'channel': 'stemmingen_kanaal', 'color': '7FD47F'},
-                        'TK STEMMING': {'channel': 'stemmingen_kanaal', 'color': '7FD47F'}
+                        'EK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'},
+                        'TK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'}
                         }
         self.flairs_resultaten = {
-                        'UITSLAGEN': {'channel': 'stemmingen_kanaal', 'color': '6E7B04'}
+                        'UITSLAGEN': {'channel': 'vote_channel', 'color': '6E7B04'}
                         }
         self.channels = {
-                         'stemmingen_kanaal': self.utils.settings['aankondigingen']['stemmingen_kanaal'],
-                         'mededeling_kanaal': self.utils.settings['aankondigingen']['mededeling_kanaal'],
-                         'media_kanaal': self.utils.settings['aankondigingen']['media_kanaal']
+                         'vote_channel': self.utils.settings['announcements']['vote_channel'],
+                         'announcement_channel': self.utils.settings['announcements']['announcement_channel'],
+                         'media_channel': self.utils.settings['announcements']['media_channel']
                         }
 
         client_id = 'xBtJB0-uZBsEDQ'
@@ -53,7 +53,7 @@ class Aankondigingen:
         self.subreddit = 'rmtk'
         self.media_subreddit = 'rmtkmedia'
 
-        self.entries = self.utils.settings['aankondigingen']['entries']
+        self.entries = self.utils.settings['announcements']['entries']
 
         self.reddit = praw.Reddit(client_id=client_id,
                                   client_secret=client_secret,
@@ -61,34 +61,34 @@ class Aankondigingen:
 
         bot.loop.create_task(self.read_feeds())
 
-    @commands.group(name='aankondiging')
+    @commands.group(name='announcement')
     @commands.is_owner()
-    async def aankondiging(self, context):
+    async def announcement(self, context):
         '''Instellingen voor aankondigingen'''
         if not context.invoked_subcommand:
             await self.utils.send_cmd_help(context)
 
-    @aankondiging.command(name='stemmingen')
-    async def aankondiging_set_stemmingen(self, context, kanaal: discord.TextChannel):
+    @announcement.command(name='vote', aliases=['stemmingen'])
+    async def set_vote_announcement(self, context, channel: discord.TextChannel):
         '''Stel een kanaal in waar de stemmingen moeten worden gedeeld'''
-        self.utils.settings['aankondigingen']['stemmingen_kanaal'] = kanaal.id
-        self.channels['stemmingen_kanaal'] = self.utils.settings['aankondigingen']['stemmingen_kanaal']
+        self.utils.settings['announcements']['vote_channel'] = channel.id
+        self.channels['vote_channel'] = self.utils.settings['announcements']['vote_channel']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
-    @aankondiging.command(name='mededelingen')
-    async def aankondiging_set_medelingen(self, context, kanaal: discord.TextChannel):
+    @announcement.command(name='announcements', aliases=['mededelingen'])
+    async def set_announcement(self, context, channel: discord.TextChannel):
         '''Stel een kanaal in waar de mededelingen moeten worden gedeeld'''
-        self.utils.settings['aankondigingen']['mededeling_kanaal'] = kanaal.id
-        self.channels['mededeling_kanaal'] = self.utils.settings['aankondigingen']['mededeling_kanaal']
+        self.utils.settings['announcements']['announcement_channel'] = channel.id
+        self.channels['announcement_channel'] = self.utils.settings['announcements']['announcement_channel']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
-    @aankondiging.command(name='media')
-    async def aankondiging_set_media(self, context, kanaal: discord.TextChannel):
+    @announcement.command(name='media')
+    async def set_media_announcement(self, context, channel: discord.TextChannel):
         '''Stel een kanaal in waar de media berichten moet worden gedeeld'''
-        self.utils.settings['aankondigingen']['media_kanaal'] = kanaal.id
-        self.channels['media_kanaal'] = self.utils.settings['aankondigingen']['media_kanaal']
+        self.utils.settings['announcements']['media_channel'] = channel.id
+        self.channels['media_channel'] = self.utils.settings['announcements']['media_channel']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
@@ -96,7 +96,7 @@ class Aankondigingen:
         await asyncio.sleep(10)
         while True:
             try:
-                if self.channels['media_kanaal']:
+                if self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.media_subreddit).new(limit=5):
                         if submission.id not in self.entries:
                             if submission.link_flair_text:
@@ -106,10 +106,10 @@ class Aankondigingen:
 
                             shortlink = submission.shortlink
 
-                            channel = self.bot.get_channel(self.channels['media_kanaal'])
+                            channel = self.bot.get_channel(self.channels['media_channel'])
 
                             self.entries.append(submission.id)
-                            self.utils.settings['aankondigingen']['entries'] = self.entries
+                            self.utils.settings['announcements']['entries'] = self.entries
                             self.utils.save_settings()
 
                             embed = discord.Embed(title=title,
@@ -117,7 +117,7 @@ class Aankondigingen:
                                                   color=discord.Color(int('6E7B04', 16)))
 
                             await channel.send(embed=embed)
-                if self.channels['stemmingen_kanaal'] and self.channels['mededeling_kanaal']:
+                if self.channels['vote_channel'] and self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
                         if submission.id not in self.entries:
                             if str(submission.link_flair_text) in self.flairs_normal:
@@ -137,7 +137,7 @@ class Aankondigingen:
                                 await channel.send(embed=embed)
 
                                 self.entries.append(submission.id)
-                                self.utils.settings['aankondigingen']['entries'] = self.entries
+                                self.utils.settings['announcements']['entries'] = self.entries
                                 self.utils.save_settings()
 
                                 await asyncio.sleep(2)
@@ -155,7 +155,7 @@ class Aankondigingen:
                                 await channel.send(embed=embed)
 
                                 self.entries.append(submission.id)
-                                self.utils.settings['aankondigingen']['entries'] = self.entries
+                                self.utils.settings['announcements']['entries'] = self.entries
                                 self.utils.save_settings()
 
                                 await asyncio.sleep(2)
@@ -173,7 +173,7 @@ class Aankondigingen:
                                 await channel.send(embed=embed)
 
                                 self.entries.append(submission.id)
-                                self.utils.settings['aankondigingen']['entries'] = self.entries
+                                self.utils.settings['announcements']['entries'] = self.entries
                                 self.utils.save_settings()
 
                                 await asyncio.sleep(2)
