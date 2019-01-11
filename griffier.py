@@ -1,3 +1,7 @@
+# Defaults
+import json
+import os
+
 # Discord
 import discord
 from discord.ext import commands
@@ -10,11 +14,11 @@ from utils.error_handler import CommandErrorHandler
 from utils.utilities import Utils
 from cogs.customchannels import CustomChannels
 # from cogs.autormtkapi import AutoRMTKAPI
-from cogs.aankondigingen import Aankondigingen
-from cogs.groeter import Groeter
+from cogs.announcements import Announcements
+from cogs.greeter import Greeter
 from cogs.starboard import Starboard
 from cogs.pinner import Pinner
-from cogs.achtbal import Achtbal
+from cogs.eightball import Eightball
 from cogs.zoltar import Zoltar
 from cogs.mute import Mute
 
@@ -48,6 +52,24 @@ class Griffier():
         if context.author.id == self.host_id:
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
+
+    @commands.command(name='devupdate')
+    @commands.has_any_role('Developer')
+    async def dev(self, context):
+        '''Update the bot to the dev branch'''
+        message = await context.send('Updating...')
+        os.chdir('../')
+        os.system('mkdir temp')
+        os.system('cp development/data/settings.json temp')
+        os.system('cp development/config.json temp')
+        os.system('rm -rf development')
+        os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
+        os.system('mkdir development/data')
+        os.system('cp temp/settings.json development/data')
+        os.system('cp temp/config.json development')
+        os.chdir('development')
+        await message.edit(content='Restarting...')
+        await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
@@ -83,9 +105,26 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
-token = 
-host_id =
-prefix = '//'
+if not os.path.exists('data/settings.json'):
+    with open('data/settings.json', encoding='utf-8', mode='w') as f:
+        f.write(json.dumps({}))
+        f.close()
+
+if not os.path.exists('config.json'):
+    with open('config.json', encoding='utf-8', mode='w') as f:
+        token = input('token> ')
+        host_id = input('member id of hoster> ')
+        prefix = input('prefix> ')
+        config = json.dumps({'token': token, 'host_id': host_id, 'prefix': prefix})
+        f.write(config)
+        f.close()
+
+with open('config.json', encoding='utf-8', mode='r') as f:
+        config = json.load(f)
+
+token = config['token']
+host_id = config['host_id']
+prefix = config['prefix']
 
 bot = commands.Bot(command_prefix=prefix,
                    activity=discord.Activity(name='NPO Polertiek',
@@ -100,12 +139,17 @@ bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
 bot.add_cog(CustomChannels(bot, utils))
-bot.add_cog(Aankondigingen(bot, utils))
-bot.add_cog(Groeter(bot, utils))
+# bot.add_cog(AutoRMTKAPI(bot, utils))
+bot.add_cog(Announcements(bot, utils))
+bot.add_cog(Greeter(bot, utils))
 bot.add_cog(Starboard(bot, utils))
 bot.add_cog(Pinner(bot, utils))
-bot.add_cog(Achtbal(bot, utils))
+bot.add_cog(Eightball(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
-
-bot.run(token)
+try:
+    bot.run(token)
+except Exception as e:
+    print(e)
+finally:
+    exit(26)
