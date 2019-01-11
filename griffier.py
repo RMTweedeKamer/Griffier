@@ -53,29 +53,23 @@ class Griffier():
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
 
-    @commands.command(name='test')
-    async def test(self, context):
-        await context.send('test')
-
     @commands.command(name='devupdate')
+    @commands.has_any_role('Developer')
     async def dev(self, context):
         '''Update the bot to the dev branch'''
-        if 'Developer' in [role.name for role in context.author.roles]:
-            message = await context.send('Updating...')
-            os.chdir('../')
-            os.system('mkdir temp')
-            os.system('cp development/data/settings.json temp')
-            os.system('cp development/config.json temp')
-            os.system('rm -rf development')
-            os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
-            os.system('mkdir development/data')
-            os.system('cp temp/settings.json development/data')
-            os.system('cp temp/config.json development')
-            os.chdir('development')
-            await message.edit(content='Restarting...')
-            await bot.logout()
-        else:
-            await context.send('You don\'t have the correct permissions to do this.')
+        message = await context.send('Updating...')
+        os.chdir('../')
+        os.system('mkdir temp')
+        os.system('cp development/data/settings.json temp')
+        os.system('cp development/config.json temp')
+        os.system('rm -rf development')
+        os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
+        os.system('mkdir development/data')
+        os.system('cp temp/settings.json development/data')
+        os.system('cp temp/config.json development')
+        os.chdir('development')
+        await message.edit(content='Restarting...')
+        await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
