@@ -17,13 +17,15 @@ class CustomChannels:
             self.utils.settings['custom_channels']['public_channels'] = []
         if 'private_channels' not in self.utils.settings['custom_channels']:
             self.utils.settings['custom_channels']['private_channels'] = []
+        if 'invite_message' not in self.utils.settings['custom_channels']:
+            self.utils.settings['custom_channels']['invite_message'] = None
 
         self.utils.save_settings()
 
         self.offtopic_category = self.utils.settings['custom_channels']['category']
         self.public_channels = self.utils.settings['custom_channels']['public_channels']
         self.private_channels = self.utils.settings['custom_channels']['private_channels']
-        self.invite_message = "{member.mention} is toegevoegd aan het kanaal!"
+        self.invite_message = self.utils.settings['custom_channels']['invite_message']
         self.description_message = "De beschrijving van dit kanaal is aangepast."
 
     async def on_guild_channel_delete(self, channel):
@@ -155,6 +157,14 @@ class CustomChannels:
                                               read_messages=True)
         await context.channel.send(self.invite_message.format(member=member))
         await context.message.delete()
+
+    @customchannel.command(name='set_invite')
+    async def customchannel_set_invite_message(self, context, *, message: str):
+        '''Stel een bericht in waarmee de nieuwe gebruikers begroet moeten worden.'''
+        self.utils.settings['custom_channels']['invite_message'] = ''.join(message)
+        self.invite_message = self.utils.settings['custom_channels']['invite_message']
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
 
     # Kleuters...
     # @privatechannel.command(name='schop', aliases=['kick'])
