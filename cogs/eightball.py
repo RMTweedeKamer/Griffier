@@ -2,11 +2,11 @@ from discord.ext import commands
 from random import choice
 
 
-class Achtbal:
+class Eightball:
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
-        self.antwoorden = [
+        self.answers = [
             'Het is zeker.',
             'Het is zo besloten.',
             'Zonder enige twijfel.',
@@ -41,4 +41,4 @@ class Achtbal:
     @commands.command(name='8ball', aliases=['8'])
     async def eightball(self, context):
         '''Voor als je er zelf niet meer uitkomt.'''
-        await context.send('**{}**'.format(choice(self.antwoorden)))
+        await context.send('**{}**'.format(choice(self.answers)))
