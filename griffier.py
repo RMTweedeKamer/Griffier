@@ -53,6 +53,10 @@ class Griffier():
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
 
+    @commands.command(name='test')
+    async def test(self, context):
+        await context.send('test')
+
     @commands.command(name='devupdate')
     async def dev(self, context):
         '''Update the bot to the dev branch'''
@@ -70,7 +74,6 @@ class Griffier():
             os.chdir('development')
             await message.edit(content='Restarting...')
             await bot.logout()
-            os.execv(__file__)
         else:
             await context.send('You don\'t have the correct permissions to do this.')
 
