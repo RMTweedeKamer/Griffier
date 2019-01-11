@@ -4,6 +4,16 @@ import discord
 from discord.ext import commands
 
 
+class Flair:
+    def __init__(self, flair_type, channel, color):
+        self.type = flair_type
+        self.channel = channel
+        self.color = color
+
+    def color_int(self):
+        return int(self.color, 16)
+
+
 class Announcements:
     def __init__(self, bot, utils):
         self.bot = bot
@@ -27,24 +37,17 @@ class Announcements:
         self.utils.save_settings()
 
         self.flairs = {
-                    'MOTIE': Flair(flair_type='normal', channel='announcement_channel', color='50004F')
+                    'MOTIE':        Flair(flair_type='normal',  channel='announcement_channel', color='50004F'),
+                    'WETSVOORSTEL': Flair(flair_type='normal',  channel='announcement_channel', color='E39088'),
+                    'KAMERSTUK':    Flair(flair_type='normal',  channel='announcement_channel', color='048ABF'),
+                    'META':         Flair(flair_type='normal',  channel='announcement_channel', color='B9005C'),
+                    'PARLEMENT':    Flair(flair_type='normal',  channel='announcement_channel', color='D8C50F'),
+                    'DEBAT':        Flair(flair_type='normal',  channel='announcement_channel', color='CD392F'),
+                    'EK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
+                    'TK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
+                    'UITSLAGEN':    Flair(flair_type='results', channel='vote_channel', color='6E7B04'),
                     }
 
-        self.flairs_normal = {
-                        'MOTIE': {'channel': 'announcement_channel', 'color': '50004F'},
-                        'WETSVOORSTEL': {'channel': 'announcement_channel', 'color': 'E39088'},
-                        'KAMERSTUK': {'channel': 'announcement_channel', 'color': '048ABF'},
-                        'META': {'channel': 'announcement_channel', 'color': 'B9005C'},
-                        'PARLEMENT': {'channel': 'announcement_channel', 'color': 'D8C50F'},
-                        'DEBAT': {'channel': 'announcement_channel', 'color': 'CD392F'}
-                        }
-        self.flairs_stemmingen = {
-                        'EK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'},
-                        'TK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'}
-                        }
-        self.flairs_resultaten = {
-                        'UITSLAGEN': {'channel': 'vote_channel', 'color': '6E7B04'}
-                        }
         self.channels = {
                          'vote_channel': self.utils.settings['announcements']['vote_channel'],
                          'announcement_channel': self.utils.settings['announcements']['announcement_channel'],
@@ -154,13 +157,6 @@ class Announcements:
         await asyncio.sleep(2)
 
 
-class Flair:
-    def __init__(self, flair_type, channel, color):
-        self.type = flair_type
-        self.channel = channel
-        self.color = color
 
-    def color_int(self):
-        return int(self.color, 16)
 
 
