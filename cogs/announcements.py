@@ -105,55 +105,45 @@ class Announcements:
             try:
                 if self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.media_subreddit).new(limit=5):
-                        if submission.id not in self.entries:
-                            if submission.link_flair_text:
-                                title = '[{}] {}'.format(submission.link_flair_text, submission.title)
-                            else:
-                                title = '{}'.format(submission.title)
-
-                            shortlink = submission.shortlink
-
-                            channel = self.bot.get_channel(self.channels['media_channel'])
-
-                            self.entries.append(submission.id)
-                            self.utils.settings['announcements']['entries'] = self.entries
-                            self.utils.save_settings()
-
-                            embed = discord.Embed(title=title,
-                                                  url=shortlink,
-                                                  color=discord.Color(int('6E7B04', 16)))
-
-                            await channel.send(embed=embed)
+                        await self.send_announcement(submission, media_submission=True)
                 if self.channels['vote_channel'] and self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
-                        if submission.id not in self.entries:
-                            await self.send_announcement(submission)
+                        await self.send_announcement(submission)
             except Exception:
                 pass
             await asyncio.sleep(10)
 
-    async def send_announcement(self, submission):
-        shortlink = submission.shortlink
-        title = submission.title
-        flair = self.flairs[str(submission.link_flair_text)]
+    async def send_announcement(self, submission, media_submission=False):
+        if submission.id not in self.entries:
+            shortlink = submission.shortlink
+            title = submission.title
 
-        if flair.type == 'normal' and ':' in title:
-            title = title.split(':')
-            title = '[{}] {}'.format(title[0], title[1])
+            if media_submission:
+                if submission.link_flair_text:
+                    title = '[{}] {}'.format(submission.link_flair_text, submission.title)
+                channel = self.bot.get_channel(self.channels['media_channel'])
+                color = int('6E7B04', 16)
+            else:
+                flair = self.flairs[str(submission.link_flair_text)]
+                if flair.type == 'normal' and ':' in title:
+                    title = title.split(':')
+                    title = '[{}] {}'.format(title[0], title[1])
 
-        channel = self.bot.get_channel(self.channels[flair.channel])
-        embed = discord.Embed(title=title,
-                              url=shortlink,
-                              color=discord.Color(flair.color_int()))
-        role_reminders = channel.guild.roles.get('name', 'Reminders')
-        await channel.send(role_reminders.mention())
-        await channel.send(embed=embed)
+                channel = self.bot.get_channel(self.channels[flair.channel])
+                color = flair.color_int()
+                role_reminders = channel.guild.roles.get('name', 'Reminders')
+                await channel.send(role_reminders.mention())
 
-        self.entries.append(submission.id)
-        self.utils.settings['announcements']['entries'] = self.entries
-        self.utils.save_settings()
+            embed = discord.Embed(title=title,
+                                  url=shortlink,
+                                  color=discord.Color(color))
+            await channel.send(embed=embed)
 
-        await asyncio.sleep(2)
+            self.entries.append(submission.id)
+            self.utils.settings['announcements']['entries'] = self.entries
+            self.utils.save_settings()
+
+            await asyncio.sleep(2)
 
 
 
