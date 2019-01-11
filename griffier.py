@@ -1,5 +1,4 @@
 # Defaults
-
 import json
 import os
 
@@ -53,6 +52,21 @@ class Griffier():
         if context.author.id == self.host_id:
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
+
+    @commands.group(name='git')
+    @commands.is_owner()
+    async def git(self, context):
+        '''Update the bot'''
+
+    @git.command(name='dev')
+    @commands.has_role(name='Developer')
+    async def dev(self, context, url: str):
+        '''Update the bot to the dev branch'''
+        os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git temp')
+        os.system('mv temp/.git code/.git')
+        os.system('rm -rf temp')
+        await context.send('Updating...')
+        await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
