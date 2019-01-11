@@ -136,18 +136,17 @@ class Announcements:
         shortlink = submission.shortlink
         title = submission.title
         flair = self.flairs[str(submission.link_flair_text)]
-        if flair.type == 'normal':
+
+        if flair.type == 'normal' and ':' in title:
             title = title.split(':')
-            if len(title) > 1:
-                title = '[{}] {}'.format(title[0], title[1])
-            else:
-                title = title[0]
+            title = '[{}] {}'.format(title[0], title[1])
+
         channel = self.bot.get_channel(self.channels[flair.channel])
         embed = discord.Embed(title=title,
                               url=shortlink,
                               color=discord.Color(flair.color_int()))
-        # role_reminders = channel.guild.roles.get('name', 'Reminders')
-        # await channel.send(role_reminders.mention())
+        role_reminders = channel.guild.roles.get('name', 'Reminders')
+        await channel.send(role_reminders.mention())
         await channel.send(embed=embed)
 
         self.entries.append(submission.id)
