@@ -23,8 +23,8 @@ class CustomChannels:
         self.offtopic_category = self.utils.settings['custom_channels']['category']
         self.public_channels = self.utils.settings['custom_channels']['public_channels']
         self.private_channels = self.utils.settings['custom_channels']['private_channels']
-        self.invite_message = self.utils.settings['custom_channels']['invite_succes']
-        self.description_message = self.utils.settings['custom_channels']['description_succes']
+        self.invite_message = "{member.mention} is toegevoegd aan het kanaal!"
+        self.description_message = "De beschrijving van dit kanaal is aangepast."
 
     async def on_guild_channel_delete(self, channel):
         if channel.id in self.public_channels:
