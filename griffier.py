@@ -88,12 +88,19 @@ class Griffier():
             await context.message.add_reaction('\U0001F44D')
 
 
+if not os.path.exists('data/settings.json'):
+    with open('config.json', encoding='utf-8', mode='w') as f:
+        config = json.dumps({})
+        f.write(config)
+        f.close()
+
 if not os.path.exists('config.json'):
     with open('config.json', encoding='utf-8', mode='w') as f:
         token = input('token> ')
         host_id = input('member id of hoster> ')
         prefix = input('prefix> ')
         config = json.dumps({'token': token, 'host_id': host_id, 'prefix': prefix})
+        f.write(config)
         f.close()
 
 with open('config.json', encoding='utf-8', mode='r') as f:
