@@ -99,7 +99,7 @@ class Announcements:
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
-    @commands.command(name='force')
+    @announcement.command(name='force')
     @commands.has_any_role('Developer')
     async def force_update(self, context):
         '''Send announcements for the last submissions posted to the appropriate channels'''
