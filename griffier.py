@@ -70,6 +70,7 @@ class Griffier():
             os.chdir('development')
             await message.edit(content='Restarting...')
             await bot.logout()
+            os.execv(__file__)
         else:
             await context.send('You don\'t have the correct permissions to do this.')
 
