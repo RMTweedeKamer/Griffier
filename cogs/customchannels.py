@@ -68,7 +68,7 @@ class CustomChannels:
             member = context.author
             await channel.set_permissions(member,
                                           read_messages=True)
-            await context.message.delete_message()
+            await context.message.delete()
 
     @customchannel.command(name='description', aliases=['beschrijving'])
     async def customchannel_change_description_channel(self, context, *, description: str):
@@ -78,8 +78,8 @@ class CustomChannels:
         if channel.id in self.public_channels or channel.id in self.private_channels:
             channel = self.bot.get_channel(channel.id)
             await channel.edit(topic=description)
-            await context.channel.send_message(self.description_message)
-            await context.message.delete_message()
+            await context.channel.send(self.description_message)
+            await context.message.delete()
 
     @customchannel.command(name='category')
     @commands.is_owner()
@@ -153,8 +153,8 @@ class CustomChannels:
         '''Nodig iemand uit om een private kanaal te betreden'''
         await context.channel.set_permissions(member,
                                               read_messages=True)
-        await context.channel.send_message(self.invite_message.format(member=member))
-        await context.message.delete_message()
+        await context.channel.send(self.invite_message.format(member=member))
+        await context.message.delete()
 
     # Kleuters...
     # @privatechannel.command(name='schop', aliases=['kick'])
@@ -170,4 +170,4 @@ class CustomChannels:
         member = context.author
         await context.channel.set_permissions(member,
                                               read_messages=False)
-        await context.message.delete_message()
+        await context.message.delete()
