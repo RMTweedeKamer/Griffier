@@ -69,7 +69,7 @@ class Announcements:
         bot.loop.create_task(self.read_feeds())
 
     @commands.group(name='announcement')
-    @commands.is_owner()
+    @commands.has_any_role('Secretaris-Generaal', 'Developer')
     async def announcement(self, context):
         '''Instellingen voor aankondigingen'''
         if not context.invoked_subcommand:
@@ -144,8 +144,10 @@ class Announcements:
 
             channel = self.bot.get_channel(self.channels[flair.channel])
             color = flair.color_int()
-            role_reminders = channel.guild.roles.get('name', 'Reminders')
-            await channel.send(role_reminders.mention())
+            for role in channel.guild.roles:
+                if str(role) == 'Reminders':
+                    break
+            await channel.send(role.mention())
 
         embed = discord.Embed(title=title,
                               url=shortlink,
