@@ -149,5 +149,9 @@ bot.add_cog(Pinner(bot, utils))
 bot.add_cog(Eightball(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
-
-bot.run(token)
+try:
+    bot.run(token)
+except Exception as e:
+    print(e)
+finally:
+    exit(26)
