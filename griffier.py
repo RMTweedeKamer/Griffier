@@ -89,9 +89,8 @@ class Griffier():
 
 
 if not os.path.exists('data/settings.json'):
-    with open('config.json', encoding='utf-8', mode='w') as f:
-        config = json.dumps({})
-        f.write(config)
+    with open('data/settings.json', encoding='utf-8', mode='w') as f:
+        f.write(json.dumps({}))
         f.close()
 
 if not os.path.exists('config.json'):
