@@ -53,18 +53,19 @@ class Griffier():
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
 
-    @commands.command(name='dev')
+    @commands.command(name='devupdate')
     async def dev(self, context):
         '''Update the bot to the dev branch'''
+        print([role.id for role in context.author.roles])
         if 533286011787280405 in [role.id for role in context.author.roles]:
             message = await context.send('Updating...')
             os.system('rm -rf development')
             os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
             os.system('cd development')
-            message.edit(content='Restarting...')
+            await message.edit(content='Restarting...')
             await bot.logout()
         else:
-            context.send('You don\'t have the correct permissions to do this.')
+            await context.send('You don\'t have the correct permissions to do this.')
 
     @commands.group(name='update')
     @commands.is_owner()
