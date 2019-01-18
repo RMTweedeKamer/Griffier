@@ -126,7 +126,7 @@ class Announcements:
                             await self.send_announcement(submission)
             except Exception:
                 pass
-            await asyncio.sleep(10)
+            await asyncio.sleep(60)
 
     async def send_announcement(self, submission, media_submission=False):
         shortlink = submission.shortlink
