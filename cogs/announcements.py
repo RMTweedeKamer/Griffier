@@ -43,8 +43,8 @@ class Announcements:
                     'META':         Flair(flair_type='normal',  channel='announcement_channel', color='B9005C'),
                     'PARLEMENT':    Flair(flair_type='normal',  channel='announcement_channel', color='D8C50F'),
                     'DEBAT':        Flair(flair_type='normal',  channel='announcement_channel', color='CD392F'),
-                    'EK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
-                    'TK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
+                    'EK STEMMING':  Flair(flair_type='votingek',  channel='vote_channel', color='7FD47F'),
+                    'TK STEMMING':  Flair(flair_type='votingtk',  channel='vote_channel', color='7FD47F'),
                     'UITSLAGEN':    Flair(flair_type='results', channel='vote_channel', color='6E7B04'),
                     'VRAGENUUR':    Flair(flair_type='questions', channel='announcement_channel', color='ADD4D6')
                     }
@@ -142,12 +142,14 @@ class Announcements:
             if flair.type == 'normal' and ':' in title:
                 title = title.split(':')
                 title = '[{}] {}'.format(title[0], title[1])
-
+            elif flair.type == 'votingek':
+                role = self.get_role('Eerste Kamerlid')
+            elif flair.type == 'votingtk':
+                role = self.get_role('Tweede Kamerlid')
+            else:
+                role = self.get_role('Reminders')
             channel = self.bot.get_channel(self.channels[flair.channel])
             color = flair.color_int()
-            for role in channel.guild.roles:
-                if str(role) == 'Reminders':
-                    break
             await channel.send(role.mention())
 
         embed = discord.Embed(title=title,
@@ -161,7 +163,10 @@ class Announcements:
 
         await asyncio.sleep(2)
 
-
+    async def get_role(self, channel, role_name):
+        for role in channel.guild.roles:
+            if str(role) == role_name:
+                return role
 
 
 
