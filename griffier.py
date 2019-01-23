@@ -54,17 +54,22 @@ class Griffier():
             await bot.logout()
 
     @commands.command(name='devupdate')
+    @commands.has_any_role('Developer')
     async def dev(self, context):
         '''Update the bot to the dev branch'''
-        if 'Developer' in [role.name for role in context.author.roles]:
-            message = await context.send('Updating...')
-            os.system('rm -rf development')
-            os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
-            os.system('cd development')
-            await message.edit(content='Restarting...')
-            await bot.logout()
-        else:
-            await context.send('You don\'t have the correct permissions to do this.')
+        message = await context.send('Updating...')
+        os.chdir('../')
+        os.system('mkdir temp')
+        os.system('cp development/data/settings.json temp')
+        os.system('cp development/config.json temp')
+        os.system('rm -rf development')
+        os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
+        os.system('mkdir development/data')
+        os.system('cp temp/settings.json development/data')
+        os.system('cp temp/config.json development')
+        os.chdir('development')
+        await message.edit(content='Restarting...')
+        await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
@@ -142,5 +147,9 @@ bot.add_cog(Pinner(bot, utils))
 bot.add_cog(Eightball(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
-
-bot.run(token)
+try:
+    bot.run(token)
+except Exception as e:
+    print(e)
+finally:
+    exit(26)
