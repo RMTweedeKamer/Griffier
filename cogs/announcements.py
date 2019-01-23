@@ -167,6 +167,3 @@ class Announcements:
         for role in channel.guild.roles:
             if str(role) == role_name:
                 return role
-
-
-
