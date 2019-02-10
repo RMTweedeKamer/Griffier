@@ -43,8 +43,8 @@ class Announcements:
                     'META':         Flair(flair_type='normal',  channel='announcement_channel', color='B9005C'),
                     'PARLEMENT':    Flair(flair_type='normal',  channel='announcement_channel', color='D8C50F'),
                     'DEBAT':        Flair(flair_type='normal',  channel='announcement_channel', color='CD392F'),
-                    'EK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
-                    'TK STEMMING':  Flair(flair_type='voting',  channel='vote_channel', color='7FD47F'),
+                    'EK STEMMING':  Flair(flair_type='votingek',  channel='vote_channel', color='7FD47F'),
+                    'TK STEMMING':  Flair(flair_type='votingtk',  channel='vote_channel', color='7FD47F'),
                     'UITSLAGEN':    Flair(flair_type='results', channel='vote_channel', color='6E7B04'),
                     'VRAGENUUR':    Flair(flair_type='questions', channel='announcement_channel', color='ADD4D6')
                     }
@@ -68,6 +68,15 @@ class Announcements:
                                   user_agent='Griffier/1.0')
 
         bot.loop.create_task(self.read_feeds())
+
+    @commands.command(name='remind', aliases=['remindme'])
+    async def set_reminder_role(self, context):
+        '''Toggle the Reminders role of the user'''
+        role = discord.utils.get(context.guild.roles, name="Reminders")
+        if role in context.author.roles:
+            await context.author.remove_roles(role)
+        else:
+            await context.author.add_roles(role)
 
     @commands.group(name='announcement')
     @commands.has_any_role('Secretaris-Generaal', 'Developer')
@@ -139,15 +148,18 @@ class Announcements:
             color = int('6E7B04', 16)
         else:
             flair = self.flairs[str(submission.link_flair_text)]
+            color = flair.color_int()
+            channel = self.bot.get_channel(self.channels[flair.channel])
             if flair.type == 'normal' and ':' in title:
                 title = title.split(':')
                 title = '[{}] {}'.format(title[0], title[1])
-
-            channel = self.bot.get_channel(self.channels[flair.channel])
-            color = flair.color_int()
-            for role in channel.guild.roles:
-                if role.name == 'Reminders':
-                    await channel.send(role.mention)
+            elif flair.type == 'votingek':
+                role = discord.utils.get(channel.guild.roles, name='Eerste Kamerlid')
+            elif flair.type == 'votingtk':
+                role = discord.utils.get(channel.guild.roles, name='Tweede Kamerlid')
+            else:
+                role = discord.utils.get(channel.guild.roles, name='Reminders')
+            await channel.send(role.mention())
 
         embed = discord.Embed(title=title,
                               url=shortlink,
@@ -159,3 +171,4 @@ class Announcements:
         self.utils.save_settings()
 
         await asyncio.sleep(2)
+
