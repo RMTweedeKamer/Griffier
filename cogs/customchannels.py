@@ -4,7 +4,7 @@ from discord.ext import commands
 
 # TODO
 
-class CustomChannels:
+class CustomChannels(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils

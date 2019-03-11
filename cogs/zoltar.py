@@ -2,7 +2,7 @@ from discord.ext import commands
 from random import choice
 
 
-class Zoltar:
+class Zoltar(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
