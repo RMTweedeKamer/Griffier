@@ -2,7 +2,7 @@ from discord.ext import commands
 from random import choice
 
 
-class Eightball:
+class Eightball(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
@@ -36,7 +36,7 @@ class Eightball:
             'Dat kun je beter aan iemand anders vragen.',
             'Ik zou nu niet in jouw schoenen willen staan.',
             'Het ziet er zeer slecht uit.',
-            ]
+        ]
 
     @commands.command(name='8ball', aliases=['8'])
     async def eightball(self, context):
