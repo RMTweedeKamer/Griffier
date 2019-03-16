@@ -3,7 +3,7 @@ from discord.ext import commands
 from datetime import datetime
 
 
-class Starboard(commands.Cog):
+class Starboard:
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils

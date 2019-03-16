@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-class Greeter(commands.Cog):
+class Greeter:
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-class Mute(commands.Cog):
+class Mute:
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
