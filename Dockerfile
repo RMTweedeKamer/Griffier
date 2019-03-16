@@ -5,4 +5,4 @@ COPY . /griffier
 
 RUN python3.6 -m pip install -r requirements.txt
 
-CMD bash deploy.sh
+CMD python3.6 griffier.py
