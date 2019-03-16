@@ -23,7 +23,7 @@ from cogs.zoltar import Zoltar
 from cogs.mute import Mute
 
 
-class Griffier(commands.Cog):
+class Griffier:
     def __init__(self, bot, host_id, utils):
         self.bot = bot
         self.host_id = host_id
