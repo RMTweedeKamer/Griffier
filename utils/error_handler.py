@@ -1,6 +1,8 @@
 import traceback
 import sys
 from discord.ext import commands
+from sentry_sdk import capture_exception, configure_scope
+import json
 
 """
 If you are not using this inside a cog, add the event decorator e.g:
@@ -35,16 +37,16 @@ class CommandErrorHandler:
 
         # Allows us to check for original exceptions raised and sent to CommandInvokeError.
         # If nothing is found. We keep the exception passed to on_command_error.
-        error = getattr(error, 'original', error)
+        original_error = getattr(error, 'original', error)
 
         # Anything in ignored will return and prevent anything happening.
-        if isinstance(error, ignored):
+        if isinstance(original_error, ignored):
             return
 
-        elif isinstance(error, commands.DisabledCommand):
+        elif isinstance(original_error, commands.DisabledCommand):
             return await ctx.send(f'{ctx.command} has been disabled.')
 
-        elif isinstance(error, commands.NoPrivateMessage):
+        elif isinstance(original_error, commands.NoPrivateMessage):
             try:
                 return await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
             except:
@@ -52,4 +54,20 @@ class CommandErrorHandler:
 
         # All other Errors not returned come here... And we can just print the default TraceBack.
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        traceback.print_exception(type(original_error), original_error, original_error.__traceback__, file=sys.stderr)
+
+        with configure_scope() as scope:
+            scope.set_extra('channel.name', ctx.channel.name)
+            scope.set_extra('author.name', ctx.author.name)
+            scope.set_extra('author.nick', ctx.author.nick)
+            scope.set_extra('author.discriminator', ctx.author.discriminator)
+            scope.set_extra('author.display_name', ctx.author.display_name)
+            scope.set_extra('message.id', ctx.message.id)
+            scope.set_extra('message.content', ctx.message.content)
+            scope.set_extra('message.jump_url', ctx.message.jump_url)
+            scope.set_extra('prefix', ctx.prefix)
+            scope.set_extra('invoked_with', ctx.invoked_with)
+        
+        await (await ctx.author.create_dm()).send('Hmm, er is een fout opgetreden bij het uitvoeren van jouw commando.')
+
+        capture_exception(original_error)

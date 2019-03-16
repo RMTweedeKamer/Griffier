@@ -1,4 +1,5 @@
 # Defaults
+import sentry_sdk
 import json
 import os
 
@@ -21,7 +22,11 @@ from cogs.pinner import Pinner
 from cogs.eightball import Eightball
 from cogs.zoltar import Zoltar
 from cogs.mute import Mute
+import sentry_sdk
 
+
+class PleaseIgnoreMyException(Exception):
+    pass
 
 class Griffier:
     def __init__(self, bot, host_id, utils):
@@ -52,6 +57,10 @@ class Griffier:
         if context.author.id == self.host_id:
             await context.send('Deze zitting is gesloten.')
             await bot.logout()
+
+    @commands.command(name='throw_error')
+    async def throw_error(self, context):
+        raise PleaseIgnoreMyException()
 
     @commands.command(name='devupdate')
     @commands.has_any_role('Developer')
@@ -125,6 +134,7 @@ with open('config.json', encoding='utf-8', mode='r') as f:
 token = config['token']
 host_id = config['host_id']
 prefix = config['prefix']
+sentry = config['sentry']
 
 bot = commands.Bot(command_prefix=prefix,
                    activity=discord.Activity(name='NPO Polertiek',
@@ -133,13 +143,14 @@ bot = commands.Bot(command_prefix=prefix,
 # Data manager en zo...
 utils = Utils(bot)
 
+sentry_sdk.init(sentry)
+
 # De bot
 bot.add_cog(Griffier(bot, host_id, utils))
 bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
 bot.add_cog(CustomChannels(bot, utils))
-# bot.add_cog(AutoRMTKAPI(bot, utils))
 bot.add_cog(Announcements(bot, utils))
 bot.add_cog(Greeter(bot, utils))
 bot.add_cog(Starboard(bot, utils))
@@ -147,9 +158,11 @@ bot.add_cog(Pinner(bot, utils))
 bot.add_cog(Eightball(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
+
 try:
     bot.run(token)
 except Exception as e:
+    sentry_sdk.capture_exception(e)
     print(e)
 finally:
     exit(26)
