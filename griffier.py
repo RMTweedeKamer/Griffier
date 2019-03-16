@@ -135,6 +135,7 @@ token = config['token']
 host_id = config['host_id']
 prefix = config['prefix']
 sentry = config['sentry']
+environment = config['environment']
 
 bot = commands.Bot(command_prefix=prefix,
                    activity=discord.Activity(name='NPO Polertiek',
@@ -143,7 +144,7 @@ bot = commands.Bot(command_prefix=prefix,
 # Data manager en zo...
 utils = Utils(bot)
 
-sentry_sdk.init(sentry)
+sentry_sdk.init(dsn=sentry, environment=environment)
 
 # De bot
 bot.add_cog(Griffier(bot, host_id, utils))
