@@ -22,6 +22,7 @@ from cogs.pinner import Pinner
 from cogs.eightball import Eightball
 from cogs.zoltar import Zoltar
 from cogs.mute import Mute
+from cogs.taunt import Taunt
 import sentry_sdk
 
 
@@ -159,6 +160,7 @@ bot.add_cog(Pinner(bot, utils))
 bot.add_cog(Eightball(bot, utils))
 bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
+bot.add_cog(Taunt(bot, utils))
 
 try:
     bot.run(token)
