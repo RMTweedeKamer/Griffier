@@ -1,4 +1,5 @@
 import discord
+from random import sample
 from discord.ext import commands
 
 
@@ -10,18 +11,16 @@ class Taunt():
         self.utils = utils
         self.taunts = [
             ':ship: **LATEN WE INDIE HEROVEREN!** :crossed_swords:',
-            'haha sp dom',
-            'Hielke is 7.',
             'Mods = Gods ...',
             ':clap: RMTK :clap: is :clap: grindr :clap: voor :clap: internetautisten :clap:',
             '**Zet een STREEP! door de democratie!**'
         ]
 
     @commands.command(name='taunt')
-    async def taunt(self, context, *, taunt: str):
+    async def taunt(self, context):
         await context.message.delete()
 
         try:
-          await context.send(self.taunts[int(taunt)])
+            await context.send(sample(self.taunts))
         except:
-          pass
+            pass
