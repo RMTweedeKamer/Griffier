@@ -149,7 +149,7 @@ class Announcements:
                                 event = self.flairs_stemmingen[str(submission.link_flair_text)]
                                 channel = self.bot.get_channel(self.channels[event['channel']])
 
-                                if str(submission.link_flair_text) is 'EK STEMMING':
+                                if str(submission.link_flair_text) == 'EK STEMMING':
                                     embed = discord.Embed(title=title,
                                                           url=shortlink,
                                                           description="<@&488369937505845261>",
