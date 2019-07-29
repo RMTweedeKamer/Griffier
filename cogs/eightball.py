@@ -36,6 +36,7 @@ class Eightball:
             'Dat kun je beter aan iemand anders vragen.',
             'Ik zou nu niet in jouw schoenen willen staan.',
             'Het ziet er zeer slecht uit.',
+            'Th8 zegt nee.',
         ]
 
     @commands.command(name='8ball', aliases=['8'])

@@ -186,10 +186,14 @@ class CustomChannels():
 
     @customchannel.command(name='purge_check')
     @commands.is_owner()
-    async def customchannel_check_purge_old_channels(self, context, term: int):
+    async def customchannel_check_purge_old_channels(self, context, term: int, private: bool):
         '''Controleer alle kanalen of ze inactief zijn sinds dan de meegegeven waarde'''
         channels = '\n\n'
-        for channel in self.public_channels:
+        if private:
+            channels_to_check = self.private_channels
+        else:
+            channels_to_check = self.public_channels
+        for channel in channels_to_check:
             ch = self.bot.get_channel(channel)
             last_message = await ch.history(limit=1).next()
             timelimit = datetime.now() - timedelta(days=term)
@@ -200,9 +204,13 @@ class CustomChannels():
 
     @customchannel.command(name='purge_for_real')
     @commands.is_owner()
-    async def customchannel_purge_old_channels(self, context, term: int):
+    async def customchannel_purge_old_channels(self, context, term: int, private: bool):
         '''Verwijder alle kanalen die inactief zijn sinds de meegegeven waarde'''
-        for channel in self.public_channels:
+        if private:
+            channels_to_check = self.private_channels
+        else:
+            channels_to_check = self.public_channels
+        for channel in channels_to_check:
             ch = self.bot.get_channel(channel)
             last_message = await ch.history(limit=1).next()
             timelimit = datetime.now() - timedelta(days=term)
