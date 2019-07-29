@@ -74,7 +74,7 @@ class Starboard:
                 else:
                     embed = discord.Embed(color=discord.Color.blurple())
 
-                embed.add_field(name='', value='[Jump!]({})'.format(message.jump_url))
+                embed.add_field(name='Link', value='[Jump!]({})'.format(message.jump_url))
                 embed.set_author(name='📌 {0.display_name}#{0.discriminator} in {1.name}'.format(author, channel), icon_url=avatar)
 
                 if attachment:
