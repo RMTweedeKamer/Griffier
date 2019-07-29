@@ -36,7 +36,7 @@ class Starboard:
     async def set_treshold(self, context, treshold: int):
         '''Treshold'''
         self.utils.settings['starboard']['treshold'] = treshold
-        self.star_channel = self.utils.settings['starboard']['treshold']
+        self.threshold = self.utils.settings['starboard']['treshold']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
