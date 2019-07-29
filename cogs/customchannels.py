@@ -174,7 +174,8 @@ class CustomChannels():
 
     @customchannel.command(name='purge_check')
     @commands.is_owner()
-    async def customchannel_purge_old_channels(self, context, *, term: int):
+    async def customchannel_check_purge_old_channels(self, context, term: int):
+        '''Controleer alle kanalen of ze inactief zijn sinds dan de meegegeven waarde'''
         channels = '\n\n'
         for channel in self.public_channels:
             ch = self.bot.get_channel(channel)
@@ -187,7 +188,8 @@ class CustomChannels():
 
     @customchannel.command(name='purge_for_real')
     @commands.is_owner()
-    async def customchannel_purge_old_channels(self, context, *, term: int):
+    async def customchannel_purge_old_channels(self, context, term: int):
+        '''Verwijder alle kanalen die inactief zijn sinds de meegegeven waarde'''
         for channel in self.public_channels:
             ch = self.bot.get_channel(channel)
             last_message = await ch.history(limit=1).next()
