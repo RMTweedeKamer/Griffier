@@ -14,13 +14,13 @@ class Starboard:
             self.utils.settings['starboard']['messages'] = []
         if 'channel' not in self.utils.settings['starboard']:
             self.utils.settings['starboard']['channel'] = None
-        if 'treshold' not in self.utils.settings['starboard']:
-            self.utils.settings['starboard']['treshold'] = 3
+        if 'threshold' not in self.utils.settings['starboard']:
+            self.utils.settings['starboard']['threshold'] = 4
 
         self.utils.save_settings()
 
         self.star_channel = self.utils.settings['starboard']['channel']
-        self.threshold = self.utils.settings['starboard']['treshold']
+        self.threshold = self.utils.settings['starboard']['threshold']
         self.starred_messages = self.utils.settings['starboard']['messages']
 
         self.emoji = '⭐'
@@ -32,11 +32,11 @@ class Starboard:
         if not context.invoked_subcommand:
             await self.utils.send_cmd_help(context)
 
-    @starboard.command(name='treshold')
-    async def set_treshold(self, context, treshold: int):
-        '''Treshold'''
-        self.utils.settings['starboard']['treshold'] = treshold
-        self.threshold = self.utils.settings['starboard']['treshold']
+    @starboard.command(name='threshold')
+    async def set_threshold(self, context, threshold: int):
+        '''threshold'''
+        self.utils.settings['starboard']['threshold'] = threshold
+        self.threshold = self.utils.settings['starboard']['threshold']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
@@ -74,9 +74,8 @@ class Starboard:
                 else:
                     embed = discord.Embed(color=discord.Color.blurple())
 
-                embed.set_author(name='📌 {0.display_name}#{0.discriminator} in {1.name}'.format(author, channel), icon_url=avatar)
                 embed.add_field(name='', value='[Jump!]({})'.format(message.jump_url))
-
+                embed.set_author(name='📌 {0.display_name}#{0.discriminator} in {1.name}'.format(author, channel), icon_url=avatar)
 
                 if attachment:
                     embed.set_image(url=attachment.url)
