@@ -174,7 +174,7 @@ class CustomChannels():
         channels = '\n\n'
         for channel in self.public_channels:
             ch = self.bot.get_channel(channel)
-            last_message = next(ch.history(limit=1))
+            last_message = ch.history(limit=1).next()
             timelimit = datetime.now() - timedelta(days=50)
             if last_message.created_at < timelimit:
                 channels += '{} ({})\n'.format(ch.mention, ch.id)
