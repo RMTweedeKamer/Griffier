@@ -64,7 +64,7 @@ class CustomChannels():
         for channel in self.public_channels:
             ch = self.bot.get_channel(channel)
             channels += '{} ({})\n'.format(ch.mention, ch.id)
-        embed = discord.Embed(color=discord.Color.red(), description=channels, title='Alle publieke kanalen')
+        embed = discord.Embed(color=discord.Color.red(), description=channels, title='Alle publieke kanalen ({})'.format(len(self.public_channels)))
         await context.send(embed=embed)
         # await context.message.add_reaction('\U0001F44D')
 
@@ -189,6 +189,7 @@ class CustomChannels():
     async def customchannel_check_purge_old_channels(self, context, term: int, private: bool):
         '''Controleer alle kanalen of ze inactief zijn sinds dan de meegegeven waarde'''
         channels = '\n\n'
+        count = 0
         if private:
             channels_to_check = self.private_channels
         else:
@@ -199,7 +200,8 @@ class CustomChannels():
             timelimit = datetime.now() - timedelta(days=term)
             if last_message.created_at < timelimit:
                 channels += '{} ({})\n'.format(ch.mention, ch.id)
-        embed = discord.Embed(color=discord.Color.red(), description=channels, title='Kanalen die verwijderd zouden worden')
+                count += 1
+        embed = discord.Embed(color=discord.Color.red(), description=channels, title='Kanalen die verwijderd zouden worden ({})'.format(count))
         await context.send(embed=embed)
 
     @customchannel.command(name='purge_for_real')
