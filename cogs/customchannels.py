@@ -176,7 +176,7 @@ class CustomChannels():
             ch = self.bot.get_channel(channel)
             last_message = ch.history(limit=1).next()
             timelimit = datetime.now() - timedelta(days=50)
-            if last_message.created_at < timelimit:
+            if last_message.created_at() < timelimit:
                 channels += '{} ({})\n'.format(ch.mention, ch.id)
         embed = discord.Embed(color=discord.Color.red(), description=channels, title='Kanalen die verwijderd zouden worden')
         await context.send(embed=embed)
