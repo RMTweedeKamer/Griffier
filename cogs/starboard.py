@@ -69,11 +69,14 @@ class Starboard:
                     attachment = None
 
                 if text:
-                    embed = discord.Embed(title='Ge-⭐ in {}'.format(channel.name), url='{}'.format(message.jump_url), color=discord.Color.blurple(), description=text)
+                    embed = discord.Embed(color=discord.Color.blurple())
+                    embed.add_field(name='Bericht', value='{}'.format(text))
                 else:
-                    embed = discord.Embed(title='Ge-⭐ in {}'.format(channel.name), url='{}'.format(message.jump_url), color=discord.Color.blurple())
+                    embed = discord.Embed(color=discord.Color.blurple())
 
-                embed.set_author(name='📌 {0.display_name}#{0.discriminator}'.format(author), icon_url=avatar)
+                embed.set_author(name='📌 {0.display_name}#{0.discriminator} in {1.name}'.format(author, channel), icon_url=avatar)
+                embed.add_field(name='', value='[Jump!]({})'.format(message.jump_url))
+
 
                 if attachment:
                     embed.set_image(url=attachment.url)
