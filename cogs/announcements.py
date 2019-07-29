@@ -32,7 +32,8 @@ class Announcements:
                         'KAMERSTUK': {'channel': 'announcement_channel', 'color': '048ABF'},
                         'META': {'channel': 'announcement_channel', 'color': 'B9005C'},
                         'PARLEMENT': {'channel': 'announcement_channel', 'color': 'D8C50F'},
-                        'DEBAT': {'channel': 'announcement_channel', 'color': 'CD392F'}
+                        'DEBAT': {'channel': 'announcement_channel', 'color': 'CD392F'},
+                        'VRAGENUUR': {'channel': 'announcement_channel', 'color': 'ADD4D6'}
                         }
         self.flairs_stemmingen = {
                         'EK STEMMING': {'channel': 'vote_channel', 'color': '7FD47F'},
@@ -148,9 +149,16 @@ class Announcements:
                                 event = self.flairs_stemmingen[str(submission.link_flair_text)]
                                 channel = self.bot.get_channel(self.channels[event['channel']])
 
-                                embed = discord.Embed(title=title,
-                                                      url=shortlink,
-                                                      color=discord.Color(int(event['color'], 16)))
+                                if str(submission.link_flair_text) is 'EK STEMMING':
+                                    embed = discord.Embed(title=title,
+                                                          url=shortlink,
+                                                          description="<@&488369937505845261>",
+                                                          color=discord.Color(int(event['color'], 16)))
+                                else:
+                                    embed = discord.Embed(title=title,
+                                                          url=shortlink,
+                                                          description="<@&488369887824052227>",
+                                                          color=discord.Color(int(event['color'], 16)))
 
                                 await channel.send(embed=embed)
 
