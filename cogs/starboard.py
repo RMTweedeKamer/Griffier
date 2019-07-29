@@ -78,7 +78,7 @@ class Starboard:
                 if attachment:
                     embed.set_image(url=attachment.url)
 
-                embed.set_footer(text='[{}]('+message.jump_url+')'.format(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
+                embed.set_footer(text='{} [Jump!]({})'.format(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), message.jump_url))
 
                 self.starred_messages.append(message.id)
                 self.utils.settings['starboard']['messages'] = self.starred_messages
