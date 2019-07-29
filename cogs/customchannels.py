@@ -28,6 +28,8 @@ class CustomChannels():
         self.private_channels = self.utils.settings['custom_channels']['private_channels']
         self.invite_message = self.utils.settings['custom_channels']['invite_message']
         self.description_message = "De beschrijving van dit kanaal is aangepast."
+        self.purge_message = "Alle oude kanalen zijn verwijderd."
+        self.create_message = " is aangemaakt!"
 
     async def on_guild_channel_delete(self, channel):
         if channel.id in self.public_channels:
@@ -120,7 +122,8 @@ class CustomChannels():
             self.private_channels = self.utils.settings['custom_channels']['private_channels']
             self.utils.save_settings()
 
-            await context.message.add_reaction('\U0001F44D')
+            await context.channel.send("Privékanaal" + self.create_message)
+            await context.message.delete()
 
     @customchannel.command(name='public', aliases=['publiek'])
     async def customchannel_new_public_channel(self, context, *, channel_name: str):
@@ -149,7 +152,8 @@ class CustomChannels():
             self.public_channels = self.utils.settings['custom_channels']['public_channels']
             self.utils.save_settings()
 
-            await context.message.add_reaction('\U0001F44D')
+            await context.channel.send("Kanaal " + channel_name + self.create_message)
+            await context.message.delete()
 
     @customchannel.command(name='invite', aliases=['verzoek'])
     async def customchannel_invite_to_channel(self, context, member: discord.Member):
@@ -168,18 +172,30 @@ class CustomChannels():
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
-    @customchannel.command(name='purge')
+    @customchannel.command(name='purge_check')
     @commands.is_owner()
-    async def customchannel_purge_old_channels(self, context):
+    async def customchannel_purge_old_channels(self, context, *, term: int):
         channels = '\n\n'
         for channel in self.public_channels:
             ch = self.bot.get_channel(channel)
             last_message = await ch.history(limit=1).next()
-            timelimit = datetime.now() - timedelta(days=50)
+            timelimit = datetime.now() - timedelta(days=term)
             if last_message.created_at < timelimit:
                 channels += '{} ({})\n'.format(ch.mention, ch.id)
         embed = discord.Embed(color=discord.Color.red(), description=channels, title='Kanalen die verwijderd zouden worden')
         await context.send(embed=embed)
+
+    @customchannel.command(name='purge_for_real')
+    @commands.is_owner()
+    async def customchannel_purge_old_channels(self, context, *, term: int):
+        for channel in self.public_channels:
+            ch = self.bot.get_channel(channel)
+            last_message = await ch.history(limit=1).next()
+            timelimit = datetime.now() - timedelta(days=term)
+            if last_message.created_at < timelimit:
+                await ch.delete()
+        await context.channel.send(self.purge_message)
+        await context.message.delete()
 
 
     # Kleuters...
