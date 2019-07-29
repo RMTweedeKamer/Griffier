@@ -14,6 +14,8 @@ class CustomChannels():
             self.utils.settings['custom_channels'] = {}
         if 'category' not in self.utils.settings['custom_channels']:
             self.utils.settings['custom_channels']['category'] = None
+        if 'private_category' not in self.utils.settings['custom_channels']:
+            self.utils.settings['custom_channels']['private_category'] = None
         if 'public_channels' not in self.utils.settings['custom_channels']:
             self.utils.settings['custom_channels']['public_channels'] = []
         if 'private_channels' not in self.utils.settings['custom_channels']:
@@ -24,6 +26,7 @@ class CustomChannels():
         self.utils.save_settings()
 
         self.offtopic_category = self.utils.settings['custom_channels']['category']
+        self.private_category = self.utils.settings['custom_channels']['private_category']
         self.public_channels = self.utils.settings['custom_channels']['public_channels']
         self.private_channels = self.utils.settings['custom_channels']['private_channels']
         self.invite_message = self.utils.settings['custom_channels']['invite_message']
@@ -95,6 +98,15 @@ class CustomChannels():
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
+    @customchannel.command(name='private_category')
+    @commands.is_owner()
+    async def customchannel_set_private_category(self, context, categorie: discord.CategoryChannel):
+        '''Kies welke categorie je wilt gebruiken om prive kanalen in kwijt te kunnen'''
+        self.utils.settings['custom_channels']['private_category'] = categorie.id
+        self.offtopic_category = self.utils.settings['custom_channels']['private_category']
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
     @customchannel.command(name='private', aliases=['prive'])
     async def customchannel_new_channel(self, context, *, channel_name: str):
         '''Open een nieuw private kanaal'''
@@ -109,7 +121,7 @@ class CustomChannels():
                 }
 
             category = discord.utils.get(guild.categories,
-                                         id=self.offtopic_category)
+                                         id=self.private_category)
 
             channel = await guild.create_text_channel(channel_name,
                                                       category=category,
