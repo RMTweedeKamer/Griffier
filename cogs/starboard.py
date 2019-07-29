@@ -69,16 +69,16 @@ class Starboard:
                     attachment = None
 
                 if text:
-                    embed = discord.Embed(color=discord.Color.blurple(), description=text)
+                    embed = discord.Embed(title='Ge-⭐ in {}'.format(channel.name), url='{}'.format(message.jump_url), color=discord.Color.blurple(), description=text)
                 else:
-                    embed = discord.Embed(color=discord.Color.blurple())
+                    embed = discord.Embed(title='Ge-⭐ in {}'.format(channel.name), url='{}'.format(message.jump_url), color=discord.Color.blurple())
 
-                embed.set_author(name='📌 {0.display_name}#{0.discriminator} in #{1.name}'.format(author, channel), icon_url=avatar)
+                embed.set_author(name='📌 {0.display_name}#{0.discriminator}'.format(author), icon_url=avatar)
 
                 if attachment:
                     embed.set_image(url=attachment.url)
 
-                embed.set_footer(text='{} [Jump!]({})'.format(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'), message.jump_url))
+                embed.set_footer(text='{}'.format(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
                 self.starred_messages.append(message.id)
                 self.utils.settings['starboard']['messages'] = self.starred_messages
