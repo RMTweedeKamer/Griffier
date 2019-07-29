@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from datetime import datetime, timedelta
 
 
 # TODO
@@ -166,6 +167,20 @@ class CustomChannels():
         self.invite_message = self.utils.settings['custom_channels']['invite_message']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
+
+    @customchannel.command(name='purge')
+    @commands.is_owner()
+    async def customchannel_purge_old_channels(self, context):
+        channels = '\n\n'
+        for channel in self.public_channels:
+            ch = self.bot.get_channel(channel)
+            last_message = self.bot.logs_from(ch, limit=1)
+            timelimit = datetime.now() - timedelta(days=50)
+            if last_message.created_at < timelimit:
+                channels += '{} ({})\n'.format(ch.mention, ch.id)
+        embed = discord.Embed(color=discord.Color.red(), description=channels, title='Kanalen die verwijderd zouden worden')
+        await context.send(embed=embed)
+
 
     # Kleuters...
     # @privatechannel.command(name='schop', aliases=['kick'])
