@@ -33,6 +33,7 @@ class CustomChannels():
         self.description_message = "De beschrijving van dit kanaal is aangepast."
         self.purge_message = "Alle oude kanalen zijn verwijderd."
         self.create_message = " is aangemaakt!"
+        self.join_message = "{member.mention}, heeft zich bij het kanaal gevoegd!"
 
     async def on_guild_channel_delete(self, channel):
         if channel.id in self.public_channels:
@@ -76,6 +77,7 @@ class CustomChannels():
             member = context.author
             await channel.set_permissions(member,
                                           read_messages=True)
+            await channel.send(self.join_message.format(member=member))
             await context.message.delete()
 
     @customchannel.command(name='description', aliases=['beschrijving'])
@@ -134,7 +136,7 @@ class CustomChannels():
             self.private_channels = self.utils.settings['custom_channels']['private_channels']
             self.utils.save_settings()
 
-            await context.channel.send("Privékanaal" + self.create_message)
+            await context.channel.send("Prive kanaal" + self.create_message)
             await context.message.delete()
 
     @customchannel.command(name='public', aliases=['publiek'])
