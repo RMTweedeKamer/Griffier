@@ -152,15 +152,17 @@ class Announcements:
                                 if str(submission.link_flair_text) == 'EK STEMMING':
                                     embed = discord.Embed(title=title,
                                                           url=shortlink,
-                                                          description="<@&488369937505845261>",
+                                                          description="Er is een nieuwe stemming voor alle Eerste Kamerleden.",
                                                           color=discord.Color(int(event['color'], 16)))
+                                    await channel.send(content="<@&488369937505845261>", embed=embed)
                                 else:
                                     embed = discord.Embed(title=title,
                                                           url=shortlink,
-                                                          description="<@&488369887824052227>",
+                                                          description="Er is een nieuwe stemming voor alle Tweede Kamerleden.",
                                                           color=discord.Color(int(event['color'], 16)))
+                                    await channel.send(content="<@&488369887824052227>", embed=embed)
 
-                                await channel.send(embed=embed)
+
 
                                 self.entries.append(submission.id)
                                 self.utils.settings['announcements']['entries'] = self.entries
