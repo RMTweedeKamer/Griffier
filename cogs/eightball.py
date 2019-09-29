@@ -46,4 +46,3 @@ class Eightball:
         if not question.endswith('?'):
             question += '?'
         await context.send('_{}_ **{}**'.format(question.capitalize(), choice(self.answers)))
-        await context.message.delete()
