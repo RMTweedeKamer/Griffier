@@ -44,6 +44,6 @@ class Eightball:
         '''Voor als je er zelf niet meer uitkomt.'''
         question = context.message.content[4:]
         if not question.endswith('?'):
-            question.append('?')
+            question += '?'
         await context.send('_{}_ **{}**'.format(question.capitalize(), choice(self.answers)))
         await context.message.delete()
