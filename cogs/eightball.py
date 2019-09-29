@@ -39,10 +39,10 @@ class Eightball:
             'Th8 zegt nee.',
         ]
 
-    @commands.command(name='8ball', aliases=['8'])
-    async def eightball(self, context):
-        '''Voor als je er zelf niet meer uitkomt.'''
-        question = context.message.content[4:]
-        if not question.endswith('?'):
-            question += '?'
-        await context.send('_{}_ **{}**'.format(question.capitalize(), choice(self.answers)))
+    # @commands.command(name='8ball', aliases=['8'])
+    # async def eightball(self, context):
+    #     '''Voor als je er zelf niet meer uitkomt.'''
+    #     question = context.message.content[4:]
+    #     if not question.endswith('?'):
+    #         question += '?'
+    #     await context.send('_{}_ **{}**'.format(question.capitalize(), choice(self.answers)))
