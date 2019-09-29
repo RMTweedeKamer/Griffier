@@ -43,5 +43,7 @@ class Eightball:
     async def eightball(self, context):
         '''Voor als je er zelf niet meer uitkomt.'''
         question = context.message.content[4:]
+        if not question.endswith('?'):
+            question.append('?')
         await context.send('_{}_? **{}**'.format(question.capitalize(), choice(self.answers)))
         await context.message.delete()
