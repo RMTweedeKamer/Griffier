@@ -19,27 +19,29 @@ from cogs.announcements import Announcements
 from cogs.greeter import Greeter
 from cogs.starboard import Starboard
 from cogs.pinner import Pinner
-from cogs.eightball import Eightball
-from cogs.zoltar import Zoltar
+# from cogs.eightball import Eightball
+# from cogs.zoltar import Zoltar
 from cogs.mute import Mute
-from cogs.taunt import Taunt
+# from cogs.taunt import Taunt
 import sentry_sdk
 
 
 class PleaseIgnoreMyException(Exception):
     pass
 
-class Griffier:
+class Griffier(commands.Cog):
     def __init__(self, bot, host_id, utils):
         self.bot = bot
         self.host_id = host_id
         self.utils = utils
 
+    @commands.Cog.listener()
     async def on_command_error(self, context, error):
         if isinstance(error, commands.UserInputError):
             await context.send('```{}```'.format(error))
             await self.utils.send_cmd_help(context)
 
+    @commands.Cog.listener()
     async def on_ready(self):
         print('Ingelogd als')
         print(self.bot.user.name)
@@ -152,20 +154,14 @@ bot.add_cog(Griffier(bot, host_id, utils))
 bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
-bot.add_cog(CustomChannels(bot, utils))
+# bot.add_cog(CustomChannels(bot, utils))
 bot.add_cog(Announcements(bot, utils))
 bot.add_cog(Greeter(bot, utils))
 bot.add_cog(Starboard(bot, utils))
 bot.add_cog(Pinner(bot, utils))
-bot.add_cog(Eightball(bot, utils))
-bot.add_cog(Zoltar(bot, utils))
+# bot.add_cog(Eightball(bot, utils))
+# bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
-bot.add_cog(Taunt(bot, utils))
+# bot.add_cog(Taunt(bot, utils))
 
-try:
-    bot.run(token)
-except Exception as e:
-    sentry_sdk.capture_exception(e)
-    print(e)
-finally:
-    exit(26)
+bot.run(token)

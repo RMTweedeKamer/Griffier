@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 
-class Announcements:
+class Announcements(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils

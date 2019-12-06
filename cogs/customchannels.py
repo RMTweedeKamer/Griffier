@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # TODO
 
-class CustomChannels():
+class CustomChannels(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
@@ -35,6 +35,7 @@ class CustomChannels():
         self.create_message = " is aangemaakt!"
         self.join_message = "{member.mention}, heeft zich bij het kanaal gevoegd!"
 
+    @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
         if channel.id in self.public_channels:
             public_channels = self.utils.settings['custom_channels']['public_channels']
