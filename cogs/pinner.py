@@ -1,12 +1,13 @@
 from discord.ext import commands
 
 
-class Pinner:
+class Pinner(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
         self.emoji = '📌'
 
+    @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         channel = message.channel
@@ -19,6 +20,7 @@ class Pinner:
                 await first_pin.unpin()
             await message.pin()
 
+    @commands.Cog.listener()
     async def on_reaction_remove(self, reaction, user):
         message = reaction.message
         emoji = reaction.emoji

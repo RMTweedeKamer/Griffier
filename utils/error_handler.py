@@ -20,10 +20,11 @@ http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#errors
 """
 
 
-class CommandErrorHandler:
+class CommandErrorHandler(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         """The event triggered when an error is raised while invoking a command.
         ctx   : Context
@@ -67,7 +68,7 @@ class CommandErrorHandler:
             scope.set_extra('message.jump_url', ctx.message.jump_url)
             scope.set_extra('prefix', ctx.prefix)
             scope.set_extra('invoked_with', ctx.invoked_with)
-        
+
         await (await ctx.author.create_dm()).send('Hmm, er is een fout opgetreden bij het uitvoeren van jouw commando.')
 
         capture_exception(original_error)

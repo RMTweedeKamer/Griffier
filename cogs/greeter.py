@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-class Greeter:
+class Greeter(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
@@ -42,6 +42,7 @@ class Greeter:
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
+    @commands.Cog.listener()
     async def on_member_join(self, member):
         if self.greet_channel and self.greet_message:
             channel = self.bot.get_channel(self.greet_channel)
