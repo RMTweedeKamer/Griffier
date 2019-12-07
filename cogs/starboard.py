@@ -25,12 +25,16 @@ class Starboard(commands.Cog):
 
         self.emoji = '⭐'
 
+
+
+
     @commands.group(name='starboard')
     @commands.is_owner()
     async def starboard(self, context):
         '''Instellingen voor pinner'''
-        if not context.invoked_subcommand:
-            await self.utils.send_cmd_help(context)
+        if self.utils.jail_check(context.command, context.channel.id):
+            if not context.invoked_subcommand:
+                await self.utils.send_cmd_help(context)
 
     @starboard.command(name='threshold')
     async def set_threshold(self, context, threshold: int):

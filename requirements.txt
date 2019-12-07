@@ -1,4 +1,4 @@
 praw==6.0.0
 aiohttp==3.3.2
-git+https://github.com/Rapptz/discord.py@60d86b6c1af3effce74adb6cdb8231436f5df252#egg=discord.py[voice]
+discord.py==1.2.5
 sentry-sdk==0.7.6
