@@ -43,7 +43,4 @@ class Eightball(commands.Cog)::
     async def eightball(self, context):
          '''Voor als je er zelf niet meer uitkomt.'''
          if self.utils.jail_check(context.command, context.channel.id):
-             question = context.message.content[4:]
-             if not question.endswith('?'):
-                 question += '?'
-             await context.send('_{}_ **{}**'.format(question.capitalize(), choice(self.answers)))
+             await context.send('**{}**'.format(choice(self.answers)))
