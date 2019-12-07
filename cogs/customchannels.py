@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 # TODO
 
-class CustomChannels():
+class CustomChannels(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
@@ -35,6 +35,7 @@ class CustomChannels():
         self.create_message = " is aangemaakt!"
         self.join_message = "{member.mention}, heeft zich bij het kanaal gevoegd!"
 
+    @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
         if channel.id in self.public_channels:
             public_channels = self.utils.settings['custom_channels']['public_channels']
@@ -54,8 +55,8 @@ class CustomChannels():
     @commands.group(name='customchannel', aliases=['cc'])
     async def customchannel(self, context):
         '''Laat gebruikers hun eigen kanalen aanmaken'''
-        if not context.invoked_subcommand:
-            await self.utils.send_cmd_help(context)
+            if not context.invoked_subcommand:
+                await self.utils.send_cmd_help(context)
 
     @customchannel.command(name='list', aliases=['lijst'])
     async def customchannel_list_directory(self, context):
@@ -222,15 +223,6 @@ class CustomChannels():
                 await ch.delete()
         await context.channel.send(self.purge_message)
         await context.message.delete()
-
-
-    # Kleuters...
-    # @privatechannel.command(name='schop', aliases=['kick'])
-    # async def privatechannel_kick_from_channel(self, context, member: discord.Member):
-    #    '''Schop iemand uit het private kanaal'''
-    #    await context.channel.set_permissions(member,
-    #                                          read_messages=False)
-    #    await context.message.add_reaction('\U0001F44D')
 
     @customchannel.command(name='leave', aliases=['verlaat'])
     async def customchannel_leave_from_channel(self, context):

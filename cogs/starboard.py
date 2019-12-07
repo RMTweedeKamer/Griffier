@@ -3,7 +3,7 @@ from discord.ext import commands
 from datetime import datetime
 
 
-class Starboard:
+class Starboard(commands.Cog):
     def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
@@ -25,12 +25,16 @@ class Starboard:
 
         self.emoji = '⭐'
 
+
+
+
     @commands.group(name='starboard')
     @commands.is_owner()
     async def starboard(self, context):
         '''Instellingen voor pinner'''
-        if not context.invoked_subcommand:
-            await self.utils.send_cmd_help(context)
+        if self.utils.jail_check(context.command, context.channel.id):
+            if not context.invoked_subcommand:
+                await self.utils.send_cmd_help(context)
 
     @starboard.command(name='threshold')
     async def set_threshold(self, context, threshold: int):
@@ -48,6 +52,7 @@ class Starboard:
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
+    @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
         message = reaction.message
         channel = message.channel
@@ -74,7 +79,7 @@ class Starboard:
                 else:
                     embed = discord.Embed(color=discord.Color.blurple())
 
-                embed.add_field(name='Link', value='[Jump!]({})'.format(message.jump_url))
+                embed.add_field(name='Link', value='[Ga naar dit bericht]({})'.format(message.jump_url),  inline=False)
                 embed.set_author(name='📌 {0.display_name}#{0.discriminator} in #{1.name}'.format(author, channel), icon_url=avatar)
 
                 if attachment:

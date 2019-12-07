@@ -1,5 +1,5 @@
 import discord
-from random import sample
+from random import choice
 from discord.ext import commands
 
 
@@ -18,9 +18,6 @@ class Taunt():
 
     @commands.command(name='taunt')
     async def taunt(self, context):
-        await context.message.delete()
-
-        try:
-            await context.send(sample(self.taunts))
-        except:
-            pass
+        if self.utils.jail_check(context.command, context.channel.id):
+            await context.message.delete()
+            await context.send(choice(self.taunts))
