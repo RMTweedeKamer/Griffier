@@ -21,6 +21,13 @@ class Utils:
     def save_settings(self):
         self.save_json(self.settings_file, self.settings)
 
+    def jail_check(self, command, channel):
+        command = command.name
+        if command in self.settings['jail']:
+            if channel in self.settings['jail'][command]:
+                return False
+        return True
+
     async def send_cmd_help(self, context):
         if context.invoked_subcommand:
             pages = await self.bot.formatter.format_help_for(context, context.invoked_subcommand)

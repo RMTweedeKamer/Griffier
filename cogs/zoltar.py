@@ -11,4 +11,5 @@ class Zoltar:
     @commands.command(name='zoltar', aliases=['z'])
     async def zoltar(self, context):
         '''Zoltar geeft je een antwoord'''
-        await context.send('👳_"{}"_👳'.format(choice(self.answers)))
+        if self.utils.jail_check(context.command, context.channel.id):
+            await context.send('👳_"{}"_👳'.format(choice(self.answers)))

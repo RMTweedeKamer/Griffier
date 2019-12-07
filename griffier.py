@@ -29,17 +29,24 @@ import sentry_sdk
 class PleaseIgnoreMyException(Exception):
     pass
 
-class Griffier:
+class Griffier(commands.Cog):
     def __init__(self, bot, host_id, utils):
         self.bot = bot
         self.host_id = host_id
         self.utils = utils
 
+        if 'jail' not in self.utils.settings:
+            self.utils.settings['jail'] = {}
+
+        self.utils.save_settings()
+
+    @commands.Cog.listener()
     async def on_command_error(self, context, error):
         if isinstance(error, commands.UserInputError):
             await context.send('```{}```'.format(error))
             await self.utils.send_cmd_help(context)
 
+    @commands.Cog.listener()
     async def on_ready(self):
         print('Ingelogd als')
         print(self.bot.user.name)
@@ -50,36 +57,49 @@ class Griffier:
     @commands.command(name='ping')
     async def ping(self, context):
         '''Stuur een ping-pong balletje'''
-        await context.message.add_reaction('\U0001F3D3')
+        if self.utils.jail_check(context.command, context.channel.id):
+            await context.message.add_reaction('\U0001F3D3')
+
+    @commands.command(name='jail')
+    @commands.is_owner()
+    async def jail(self, context, command: str):
+        '''Een commando mag niet in dit kanaal worden gebruikt.'''
+        channel = context.channel.id
+
+        if command not in self.utils.settings['jail']:
+            self.utils.settings['jail'][command] = []
+
+        if channel not in self.utils.settings['jail'][command]:
+            self.utils.settings['jail'][command].append(channel)
+
+        self.utils.save_settings()
+
+        await context.message.add_reaction('\U0001F44D')
+
+    @commands.command(name='unjail')
+    @commands.is_owner()
+    async def unjail(self, context, command: str):
+        '''Een commando mag weer in dit kanaal worden gebruikt.'''
+        channel = context.channel.id
+
+        if command in self.utils.settings['jail']:
+            if channel in self.utils.settings['jail'][command]:
+                self.utils.settings['jail'][command].remove(channel)
+
+                self.utils.save_settings()
+
+        await context.message.add_reaction('\U0001F44D')
 
     @commands.command(name='afsluiten', aliases=['shutdown'])
+    @commands.is_owner()
     async def shutdown_bot(self, context):
         '''Sluit Griffier af'''
-        if context.author.id == self.host_id:
-            await context.send('Deze zitting is gesloten.')
-            await bot.logout()
+        await context.send('Deze zitting is gesloten.')
+        await bot.logout()
 
     @commands.command(name='throw_error')
     async def throw_error(self, context):
         raise PleaseIgnoreMyException()
-
-    @commands.command(name='devupdate')
-    @commands.has_any_role('Developer')
-    async def dev(self, context):
-        '''Update the bot to the dev branch'''
-        message = await context.send('Updating...')
-        os.chdir('../')
-        os.system('mkdir temp')
-        os.system('cp development/data/settings.json temp')
-        os.system('cp development/config.json temp')
-        os.system('rm -rf development')
-        os.system('git clone -b dev --single-branch https://github.com/RMTweedeKamer/Griffier.git development')
-        os.system('mkdir development/data')
-        os.system('cp temp/settings.json development/data')
-        os.system('cp temp/config.json development')
-        os.chdir('development')
-        await message.edit(content='Restarting...')
-        await bot.logout()
 
     @commands.group(name='update')
     @commands.is_owner()
@@ -162,10 +182,4 @@ bot.add_cog(Zoltar(bot, utils))
 bot.add_cog(Mute(bot, utils))
 bot.add_cog(Taunt(bot, utils))
 
-try:
-    bot.run(token)
-except Exception as e:
-    sentry_sdk.capture_exception(e)
-    print(e)
-finally:
-    exit(26)
+bot.run(token)
