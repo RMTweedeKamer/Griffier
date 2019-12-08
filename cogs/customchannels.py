@@ -55,8 +55,8 @@ class CustomChannels(commands.Cog):
     @commands.group(name='customchannel', aliases=['cc'])
     async def customchannel(self, context):
         '''Laat gebruikers hun eigen kanalen aanmaken'''
-            if not context.invoked_subcommand:
-                await self.utils.send_cmd_help(context)
+        if not context.invoked_subcommand:
+            await self.utils.send_cmd_help(context)
 
     @customchannel.command(name='list', aliases=['lijst'])
     async def customchannel_list_directory(self, context):
