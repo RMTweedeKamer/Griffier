@@ -56,38 +56,38 @@ class Sleepnet(commands.Cog):
     @commands.Cog.listener()
     async def on_bulk_message_delete(self, messages):
         for message in messages:
-        guild = message.guild
-        author = message.author
-        channel = message.channel
+            guild = message.guild
+            author = message.author
+            channel = message.channel
 
-        if isinstance(channel, discord.abc.GuildChannel):
-            if author.id != self.bot.user.id:
+            if isinstance(channel, discord.abc.GuildChannel):
+                if author.id != self.bot.user.id:
 
-                    embed = discord.Embed(color=self.red)
-                    embed.set_thumbnail(url=author.avatar_url)
-                    embed.set_author(name='Bericht verwijderd')
-                    embed.add_field(name='Gebruiker', value='{0.name}#{0.discriminator}\n({0.id})'.format(author))
+                        embed = discord.Embed(color=self.red)
+                        embed.set_thumbnail(url=author.avatar_url)
+                        embed.set_author(name='Bericht verwijderd')
+                        embed.add_field(name='Gebruiker', value='{0.name}#{0.discriminator}\n({0.id})'.format(author))
 
-                    embed.add_field(name='Kanaal', value=message.channel.mention)
-                    if message.content:
-                        embed.add_field(name='Bericht', value=message.clean_content, inline=False)
+                        embed.add_field(name='Kanaal', value=message.channel.mention)
+                        if message.content:
+                            embed.add_field(name='Bericht', value=message.clean_content, inline=False)
 
-                    embed.set_footer(text='Bericht ID: {} | {}'.format(message.id,
-                                                                       datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
+                        embed.set_footer(text='Bericht ID: {} | {}'.format(message.id,
+                                                                           datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
-                    await self._send_message_to_channel(guild, embed=embed)
+                        await self._send_message_to_channel(guild, embed=embed)
 
-                    if message.attachments:
-                        attachment = message.attachments[0]
-                        attachement_data = await attachment.read(use_cached=True)
-                        filename = await self.downloadattachment(attachement_data,
-                                                                 attachment.url,
-                                                                 attachment.filename,
-                                                                 message.id)
-                        message = 'Bijlagen voor bericht: {}'.format(message.id)
-                        await self._send_message_to_channel(guild,
-                                                            content=message,
-                                                            attachment=self.attachment_path+'/'+filename)
+                        if message.attachments:
+                            attachment = message.attachments[0]
+                            attachement_data = await attachment.read(use_cached=True)
+                            filename = await self.downloadattachment(attachement_data,
+                                                                     attachment.url,
+                                                                     attachment.filename,
+                                                                     message.id)
+                            message = 'Bijlagen voor bericht: {}'.format(message.id)
+                            await self._send_message_to_channel(guild,
+                                                                content=message,
+                                                                attachment=self.attachment_path+'/'+filename)
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
