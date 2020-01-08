@@ -13,10 +13,13 @@ class Sleepnet(commands.Cog):
             self.utils.settings['sleepnet'] = {}
         if 'channel' not in self.utils.settings['sleepnet']:
             self.utils.settings['sleepnet']['channel'] = ''
+        if 'ignore' not in self.utils.settings['sleepnet']:
+            self.utils.settings['sleepnet']['ignore'] = []
 
         self.utils.save_settings()
 
         self._channel = self.utils.settings['sleepnet']['channel']
+        self._ignore_channels = self.utils.settings['sleepnet']['ignore']
         self.attachment_path = 'data'
 
         self.green = discord.Color.green()
@@ -31,6 +34,18 @@ class Sleepnet(commands.Cog):
         '''Kies welk kanaal je wilt gebruiken.'''
         self._channel = channel.id
         self.utils.settings['sleepnet']['channel'] = self._channel
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
+    @commands.command(name='sleepnetignore')
+    @commands.is_owner()
+    async def ignore_channel(self, context, channel: discord.TextChannel):
+        '''Kies welk kanaal je wilt negerren. Dit is een toggle.'''
+        if channel.id not in self._ignore_channels:
+            self._ignore_channels.append(channel.id)
+        else:
+            self._ignore_channels.remove(channel.id)
+        self.utils.settings['sleepnet']['ignore'] = self._ignore_channels
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
@@ -61,7 +76,7 @@ class Sleepnet(commands.Cog):
             channel = message.channel
 
             if isinstance(channel, discord.abc.GuildChannel):
-                if author.id != self.bot.user.id:
+                if author.id != self.bot.user.id and channel.id not in self._ignore_channels:
 
                         embed = discord.Embed(color=self.red)
                         embed.set_thumbnail(url=author.avatar_url)
@@ -96,7 +111,7 @@ class Sleepnet(commands.Cog):
         channel = message.channel
 
         if isinstance(channel, discord.abc.GuildChannel):
-            if author.id != self.bot.user.id:
+            if author.id != self.bot.user.id and channel.id not in self._ignore_channels:
 
                     embed = discord.Embed(color=self.red)
                     embed.set_thumbnail(url=author.avatar_url)
@@ -132,7 +147,7 @@ class Sleepnet(commands.Cog):
 
         if isinstance(channel, discord.abc.GuildChannel):
 
-                if author.id != self.bot.user.id and before.clean_content != after.clean_content:
+                if author.id != self.bot.user.id and before.clean_content != after.clean_content and channel.id not in self._ignore_channels:
 
                     embed = discord.Embed(color=self.blue)
                     embed.set_thumbnail(url=author.avatar_url)
