@@ -1,4 +1,5 @@
 import json
+from discord.ext import commands
 
 
 class Utils:
@@ -30,10 +31,6 @@ class Utils:
 
     async def send_cmd_help(self, context):
         if context.invoked_subcommand:
-            pages = await self.bot.formatter.format_help_for(context, context.invoked_subcommand)
-            for page in pages:
-                await context.send(page)
+            await context.send_help(context.invoked_subcommand)
         else:
-            pages = await self.bot.formatter.format_help_for(context, context.command)
-            for page in pages:
-                await context.send(page)
+            await context.send_help(context.command)
