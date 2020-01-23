@@ -110,9 +110,9 @@ class Sleepnet(commands.Cog):
         if isinstance(channel, discord.abc.GuildChannel):
             if author.id != self.bot.user.id and channel.id not in self._ignore_channels:
 
-                    description = ''
+                    description = '**Er is een bericht verwijderd in {}:**'.format(message.channel.mention)
                     if message.content:
-                        description = '**Er is een bericht verwijderd in {}:**\n\n> {}'.format(message.channel.mention, message.clean_content)
+                        description += '\n\n> {}'.format(message.clean_content)
                     embed = discord.Embed(color=self.red, description=description)
                     embed.set_author(name='{0.name}#{0.discriminator} ({0.id})'.format(author), icon_url=author.avatar_url)
                     embed.set_footer(text='Bericht ID: {} • {}'.format(message.id, datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
