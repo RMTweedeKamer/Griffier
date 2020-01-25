@@ -27,6 +27,7 @@ class Announcements(commands.Cog):
         self.utils.save_settings()
 
         self.flairs_normal = {
+                        'KON. BESLUIT': {'channel': 'announcement_channel', 'color': '#AE1C28'},
                         'MOTIE': {'channel': 'announcement_channel', 'color': '50004F'},
                         'WETSVOORSTEL': {'channel': 'announcement_channel', 'color': 'E39088'},
                         'KAMERSTUK': {'channel': 'announcement_channel', 'color': '048ABF'},
@@ -102,22 +103,20 @@ class Announcements(commands.Cog):
                         if submission.id not in self.entries:
                             if submission.link_flair_text:
                                 title = '[{}] {}'.format(submission.link_flair_text, submission.title)
-                            else:
-                                title = '{}'.format(submission.title)
 
-                            shortlink = submission.shortlink
+                                shortlink = submission.shortlink
 
-                            channel = self.bot.get_channel(self.channels['media_channel'])
+                                channel = self.bot.get_channel(self.channels['media_channel'])
 
-                            self.entries.append(submission.id)
-                            self.utils.settings['announcements']['entries'] = self.entries
-                            self.utils.save_settings()
+                                self.entries.append(submission.id)
+                                self.utils.settings['announcements']['entries'] = self.entries
+                                self.utils.save_settings()
 
-                            embed = discord.Embed(title=title,
-                                                  url=shortlink,
-                                                  color=discord.Color(int('6E7B04', 16)))
+                                embed = discord.Embed(title=title,
+                                                      url=shortlink,
+                                                      color=discord.Color(int('6E7B04', 16)))
 
-                            await channel.send(embed=embed)
+                                await channel.send(embed=embed)
                 if self.channels['vote_channel'] and self.channels['media_channel']:
                     for submission in self.reddit.subreddit(self.subreddit).new(limit=5):
                         if submission.id not in self.entries:

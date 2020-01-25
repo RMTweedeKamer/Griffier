@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 import difflib
+import re
 
 
 class Sleepnet(commands.Cog):
@@ -13,10 +14,13 @@ class Sleepnet(commands.Cog):
             self.utils.settings['sleepnet'] = {}
         if 'channel' not in self.utils.settings['sleepnet']:
             self.utils.settings['sleepnet']['channel'] = ''
+        if 'ignore' not in self.utils.settings['sleepnet']:
+            self.utils.settings['sleepnet']['ignore'] = []
 
         self.utils.save_settings()
 
         self._channel = self.utils.settings['sleepnet']['channel']
+        self._ignore_channels = self.utils.settings['sleepnet']['ignore']
         self.attachment_path = 'data'
 
         self.green = discord.Color.green()
@@ -31,6 +35,18 @@ class Sleepnet(commands.Cog):
         '''Kies welk kanaal je wilt gebruiken.'''
         self._channel = channel.id
         self.utils.settings['sleepnet']['channel'] = self._channel
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
+    @commands.command(name='sleepnetignore')
+    @commands.is_owner()
+    async def ignore_channel(self, context, channel: discord.TextChannel):
+        '''Kies welk kanaal je wilt negerren. Dit is een toggle.'''
+        if channel.id not in self._ignore_channels:
+            self._ignore_channels.append(channel.id)
+        else:
+            self._ignore_channels.remove(channel.id)
+        self.utils.settings['sleepnet']['ignore'] = self._ignore_channels
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
@@ -61,19 +77,15 @@ class Sleepnet(commands.Cog):
             channel = message.channel
 
             if isinstance(channel, discord.abc.GuildChannel):
-                if author.id != self.bot.user.id:
+                if author.id != self.bot.user.id and channel.id not in self._ignore_channels:
 
-                        embed = discord.Embed(color=self.red)
-                        embed.set_thumbnail(url=author.avatar_url)
-                        embed.set_author(name='Bericht verwijderd')
-                        embed.add_field(name='Gebruiker', value='{0.name}#{0.discriminator}\n({0.id})'.format(author))
-
-                        embed.add_field(name='Kanaal', value=message.channel.mention)
+                        description = ''
                         if message.content:
-                            embed.add_field(name='Bericht', value=message.clean_content, inline=False)
+                            description = '**Er is een bericht verwijderd in {}:**\n\n> {}'.format(message.channel.mention, message.clean_content)
+                        embed = discord.Embed(color=self.red, description=description)
+                        embed.set_author(name='{0.name}#{0.discriminator} ({0.id})'.format(author), icon_url=author.avatar_url)
+                        embed.set_footer(text='Bericht ID: {} • {}'.format(message.id, datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
-                        embed.set_footer(text='Bericht ID: {} | {}'.format(message.id,
-                                                                           datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
                         await self._send_message_to_channel(guild, embed=embed)
 
@@ -96,19 +108,15 @@ class Sleepnet(commands.Cog):
         channel = message.channel
 
         if isinstance(channel, discord.abc.GuildChannel):
-            if author.id != self.bot.user.id:
+            if author.id != self.bot.user.id and channel.id not in self._ignore_channels:
 
-                    embed = discord.Embed(color=self.red)
-                    embed.set_thumbnail(url=author.avatar_url)
-                    embed.set_author(name='Bericht verwijderd')
-                    embed.add_field(name='Gebruiker', value='{0.name}#{0.discriminator}\n({0.id})'.format(author))
-
-                    embed.add_field(name='Kanaal', value=message.channel.mention)
+                    description = '**Er is een bericht verwijderd in {}:**'.format(message.channel.mention)
                     if message.content:
-                        embed.add_field(name='Bericht', value=message.clean_content, inline=False)
+                        description += '\n\n> {}'.format(message.clean_content)
+                    embed = discord.Embed(color=self.red, description=description)
+                    embed.set_author(name='{0.name}#{0.discriminator} ({0.id})'.format(author), icon_url=author.avatar_url)
+                    embed.set_footer(text='Bericht ID: {} • {}'.format(message.id, datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
-                    embed.set_footer(text='Bericht ID: {} | {}'.format(message.id,
-                                                                       datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
                     await self._send_message_to_channel(guild, embed=embed)
 
@@ -130,19 +138,26 @@ class Sleepnet(commands.Cog):
         author = after.author
         channel = after.channel
 
+        before_no_markdown = discord.utils.escape_markdown(before.clean_content)
+        after_no_markdown = discord.utils.escape_markdown(after.clean_content)
+
+        x = ''
+        for s in difflib.ndiff(before_no_markdown, after_no_markdown):
+            if s[0] == ' ':
+                x += s[-1]
+            elif s[0] == '-':
+                x += '~~{}~~'.format(s[-1])
+            elif s[0] == '+':
+                x += '**{}**'.format(s[-1])
+
+        diffcomp = re.sub('(\*{4}|\~{4}|\_{2})', '', x)
+
         if isinstance(channel, discord.abc.GuildChannel):
 
-                if author.id != self.bot.user.id and before.clean_content != after.clean_content:
-
-                    embed = discord.Embed(color=self.blue)
-                    embed.set_thumbnail(url=author.avatar_url)
-                    embed.set_author(name='Bericht aangepast')
-                    embed.add_field(name='Gebruiker', value='{0.name}#{0.discriminator}\n({0.id})'.format(author))
-                    embed.add_field(name='Kanaal', value=before.channel.mention)
-                    embed.add_field(name='Voor aanpassing', value=before.clean_content, inline=False)
-                    embed.add_field(name='Na aanpassing', value=after.clean_content, inline=False)
-                    embed.add_field(name='Link', value='[Ga naar dit bericht]({})'.format(after.jump_url), inline=False)
-                    embed.set_footer(text='Bericht ID: {} | {}'.format(after.id,
-                                                                       datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
+                if author.id != self.bot.user.id and before.clean_content != after.clean_content and channel.id not in self._ignore_channels:
+                    description = '**Er is een bericht aangepast in {}:**\n\n> {}\n\n[Ga naar dit bericht]({})'.format(before.channel.mention, diffcomp, after.jump_url)
+                    embed = discord.Embed(color=self.blue, description=description)
+                    embed.set_author(name='{0.name}#{0.discriminator} ({0.id})'.format(author), icon_url=author.avatar_url)
+                    embed.set_footer(text='Bericht ID: {} • {}'.format(after.id, datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
 
                     await self._send_message_to_channel(guild, embed=embed)
