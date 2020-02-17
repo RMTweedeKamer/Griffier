@@ -27,7 +27,7 @@ class Announcements(commands.Cog):
         self.utils.save_settings()
 
         self.flairs_normal = {
-                        'KON. BESLUIT': {'channel': 'announcement_channel', 'color': '#AE1C28'},
+                        'KON. BESLUIT': {'channel': 'announcement_channel', 'color': 'AE1C28'},
                         'MOTIE': {'channel': 'announcement_channel', 'color': '50004F'},
                         'WETSVOORSTEL': {'channel': 'announcement_channel', 'color': 'E39088'},
                         'KAMERSTUK': {'channel': 'announcement_channel', 'color': '048ABF'},
