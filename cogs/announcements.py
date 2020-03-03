@@ -5,12 +5,9 @@ from discord.ext import commands
 
 
 class Announcements(commands.Cog):
-    def __init__(self, bot, utils, reddit_client_id, reddit_client_secret):
-
+    def __init__(self, bot, utils):
         self.bot = bot
         self.utils = utils
-        self.reddit_client_id = reddit_client_id
-        self.reddit_client_secret = reddit_client_secret
 
         if 'announcements' not in self.utils.settings:
             self.utils.settings['announcements'] = {}
@@ -60,8 +57,8 @@ class Announcements(commands.Cog):
 
         self.entries = self.utils.settings['announcements']['entries']
 
-        self.reddit = praw.Reddit(client_id=self.reddit_client_id,
-                                  client_secret=self.reddit_client_secret,
+        self.reddit = praw.Reddit(client_id=client_id,
+                                  client_secret=client_secret,
                                   user_agent='Griffier/1.0')
 
         bot.loop.create_task(self.read_feeds())
