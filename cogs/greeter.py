@@ -21,6 +21,7 @@ class Greeter(commands.Cog):
 
     @commands.group(name='greeter')
     @commands.is_owner()
+    @commands.has_role(488363614294507541)
     async def greeter(self, context):
         '''Instellingen voor de groeter'''
         if not context.invoked_subcommand:

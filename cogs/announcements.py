@@ -65,6 +65,7 @@ class Announcements(commands.Cog):
 
     @commands.group(name='announcement')
     @commands.is_owner()
+    @commands.has_role(488363614294507541)
     async def announcement(self, context):
         '''Instellingen voor aankondigingen'''
         if not context.invoked_subcommand:

@@ -30,6 +30,7 @@ class Starboard(commands.Cog):
 
     @commands.group(name='starboard')
     @commands.is_owner()
+    @commands.has_role(488363614294507541)
     async def starboard(self, context):
         '''Instellingen voor starboard'''
         if self.utils.jail_check(context.command, context.channel.id):
