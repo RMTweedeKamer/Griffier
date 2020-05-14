@@ -179,8 +179,7 @@ class CustomChannels(commands.Cog):
         await context.message.delete()
 
     @customchannel.command(name='set_invite')
-    @commands.is_owner()
-    @commands.has_role(488363614294507541)
+    @commands.has_any_role(488363614294507541, 488361925575573505)
     async def customchannel_set_invite_message(self, context, *, message: str):
         '''Stel een bericht in waarmee de uitgenodigde mensen begroet moeten worden.'''
         self.utils.settings['custom_channels']['invite_message'] = ''.join(message)
@@ -189,8 +188,7 @@ class CustomChannels(commands.Cog):
         await context.message.add_reaction('\U0001F44D')
 
     @customchannel.command(name='purge_check')
-    @commands.is_owner()
-    @commands.has_role(488363614294507541)
+    @commands.has_any_role(488363614294507541, 488361925575573505)
     async def customchannel_check_purge_old_channels(self, context, term: int, private: bool):
         '''Controleer alle kanalen of ze inactief zijn sinds dan de meegegeven waarde'''
         channels = '\n\n'
@@ -210,8 +208,7 @@ class CustomChannels(commands.Cog):
         await context.send(embed=embed)
 
     @customchannel.command(name='purge_for_real')
-    @commands.is_owner()
-    @commands.has_role(488363614294507541)
+    @commands.has_any_role(488363614294507541, 488361925575573505)
     async def customchannel_purge_old_channels(self, context, term: int, private: bool):
         '''Verwijder alle kanalen die inactief zijn sinds de meegegeven waarde'''
         if private:

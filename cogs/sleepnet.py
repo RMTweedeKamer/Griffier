@@ -39,8 +39,7 @@ class Sleepnet(commands.Cog):
         await context.message.add_reaction('\U0001F44D')
 
     @commands.command(name='sleepnetignore')
-    @commands.is_owner()
-    @commands.has_role(488363614294507541)
+    @commands.has_any_role(488363614294507541, 488361925575573505)
     async def ignore_channel(self, context, channel: discord.TextChannel):
         '''Kies welk kanaal je wilt negeren. Dit is een toggle.'''
         if channel.id not in self._ignore_channels:

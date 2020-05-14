@@ -64,8 +64,7 @@ class Announcements(commands.Cog):
         bot.loop.create_task(self.read_feeds())
 
     @commands.group(name='announcement')
-    @commands.is_owner()
-    @commands.has_role(488363614294507541)
+    @commands.has_any_role(488363614294507541, 488361925575573505)
     async def announcement(self, context):
         '''Instellingen voor aankondigingen'''
         if not context.invoked_subcommand:
