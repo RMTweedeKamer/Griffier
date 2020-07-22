@@ -1,4 +1,4 @@
 praw==6.0.0
 aiohttp==3.3.2
-discord.py==1.2.5
-sentry-sdk==0.7.6
+discord.py==1.3.4
+sentry-sdk==0.16.1
