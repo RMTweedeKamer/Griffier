@@ -215,11 +215,15 @@ class Announcements(commands.Cog):
                     submission = self.reddit.submission(url=self.oehoe_url)
                     submission.comment_sort = "new"
                     submission.comments.replace_more(limit=None)
-                    for comment in submission.comments.list()[-5:]:
+                    for comment in submission.comments.list()[:5]:
                         if comment.id not in self.comments:
-                            title = 'Nieuwe Oehoe van {}'.format(comment.author)
+                            title = 'Nieuwe oehoe van {}'.format(comment.author)
 
                             link = 'https://reddit.com' + comment.permalink
+
+                            message = comment.body
+                            oehoeName = message.split()[0]
+                            message = message.split()[1:].replace(">", "")
 
                             parent = str(comment.parent_id)
                             parent_comment = None
@@ -229,20 +233,20 @@ class Announcements(commands.Cog):
 
                             channel = self.bot.get_channel(self.channels['oehoe_channel'])
 
-                            logging.error(link)
-                            embed = discord.Embed(title=title,
-                                                  url=link,
-                                                  color=discord.Color(int('6E7B04', 16)))
-                            embed.add_field(name="Inhoud", value=comment.body)
-                            if parent_comment is not None:
-                                embed.add_field(name="Als reactie op", value=parent_comment.body)
-
                             self.comments.append(comment.id)
                             self.utils.settings['announcements']['comments'] = self.comments
                             self.utils.save_settings()
 
+                            embed = discord.Embed(title=title,
+                                                  url=link,
+                                                  color=discord.Color(int('0d5e13', 16)))
+                            embed.set_thumbnail(url="https://i.imgur.com/LikPIj8.png")
+                            embed.add_field(name="Gebruiker", value=oehoeName)
+                            embed.add_field(name="Inhoud", value=message)
+                            if parent_comment is not None:
+                                embed.add_field(name="Reactie op", value=parent_comment.body.replace(">", ""))
+
                             await channel.send(embed=embed)
-            except Exception as e:
-                logging.error(e)
+            except Exception:
                 pass
             await asyncio.sleep(10)
