@@ -1,4 +1,6 @@
 import asyncio
+import logging
+
 import praw
 import discord
 from discord.ext import commands
@@ -225,11 +227,7 @@ class Announcements(commands.Cog):
                             if parent.startswith('t1_'):
                                 parent_comment = self.reddit.comment(id=parent[2:])
 
-                            channel = self.bot.get_channel(self.channels['media_channel'])
-
-                            self.entries.append(submission.id)
-                            self.utils.settings['announcements']['entries'] = self.entries
-                            self.utils.save_settings()
+                            channel = self.bot.get_channel(self.channels['oehoe_channel'])
 
                             embed = discord.Embed(title=title,
                                                   url=link,
@@ -243,8 +241,7 @@ class Announcements(commands.Cog):
                             self.utils.save_settings()
 
                             await channel.send(embed=embed)
-
-
-            except Exception:
+            except Exception as e:
+                logging.error(e)
                 pass
             await asyncio.sleep(10)
