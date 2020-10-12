@@ -219,13 +219,13 @@ class Announcements(commands.Cog):
                         if comment.id not in self.comments:
                             title = 'Nieuwe Oehoe van {}'.format(comment.author)
 
-                            link = comment.permalink
+                            link = 'https://reddit.com' + comment.permalink
 
                             parent = str(comment.parent_id)
                             parent_comment = None
                             if parent.startswith('t1_'):
                                 logging.error(parent[4:])
-                                parent_comment = self.reddit.comment(id= parent[4:] )
+                                parent_comment = self.reddit.comment(id=parent[4:])
 
                             channel = self.bot.get_channel(self.channels['oehoe_channel'])
 
@@ -234,7 +234,7 @@ class Announcements(commands.Cog):
                                                   url=link,
                                                   color=discord.Color(int('6E7B04', 16)))
                             embed.add_field(name="Inhoud", value=comment.body)
-                            if parent_comment:
+                            if parent_comment is not None:
                                 embed.add_field(name="Als reactie op", value=parent_comment.body)
 
                             self.comments.append(comment.id)
