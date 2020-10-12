@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import re
 
 import praw
@@ -248,6 +247,5 @@ class Announcements(commands.Cog):
 
                             await channel.send(embed=embed)
             except Exception as e:
-                logging.error(e)
                 pass
             await asyncio.sleep(10)
