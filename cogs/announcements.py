@@ -224,11 +224,12 @@ class Announcements(commands.Cog):
                             parent = str(comment.parent_id)
                             parent_comment = None
                             if parent.startswith('t1_'):
+                                logging.error(parent[4:0])
                                 parent_comment = self.reddit.comment(id= parent[4:] )
 
                             channel = self.bot.get_channel(self.channels['oehoe_channel'])
 
-                            logging.debug(link)
+                            logging.error(link)
                             embed = discord.Embed(title=title,
                                                   url=link,
                                                   color=discord.Color(int('6E7B04', 16)))
