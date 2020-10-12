@@ -21,8 +21,14 @@ class Announcements(commands.Cog):
             self.utils.settings['announcements']['vote_channel'] = None
         if 'media_channel' not in self.utils.settings['announcements']:
             self.utils.settings['announcements']['media_channel'] = None
+        if 'oehoe_channel' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['oehoe_channel'] = None
+        if 'oehoe_url' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['oehoe_url'] = None
         if 'entries' not in self.utils.settings['announcements']:
             self.utils.settings['announcements']['entries'] = []
+        if 'comments' not in self.utils.settings['announcements']:
+            self.utils.settings['announcements']['comments'] = []
 
         self.utils.save_settings()
 
@@ -46,7 +52,8 @@ class Announcements(commands.Cog):
         self.channels = {
                          'vote_channel': self.utils.settings['announcements']['vote_channel'],
                          'announcement_channel': self.utils.settings['announcements']['announcement_channel'],
-                         'media_channel': self.utils.settings['announcements']['media_channel']
+                         'media_channel': self.utils.settings['announcements']['media_channel'],
+                         'oehoe_channel': self.utils.settings['announcements']['oehoe_channel']
                         }
 
         client_id = 'xBtJB0-uZBsEDQ'
@@ -54,8 +61,10 @@ class Announcements(commands.Cog):
 
         self.subreddit = 'rmtk'
         self.media_subreddit = 'rmtkmedia'
+        self.oehoe_url = self.utils.settings['announcements']['oehoe_url']
 
         self.entries = self.utils.settings['announcements']['entries']
+        self.comments = self.utils.settings['announcements']['comments']
 
         self.reddit = praw.Reddit(client_id=client_id,
                                   client_secret=client_secret,
@@ -91,6 +100,20 @@ class Announcements(commands.Cog):
         '''Stel een kanaal in waar de media berichten moet worden gedeeld'''
         self.utils.settings['announcements']['media_channel'] = channel.id
         self.channels['media_channel'] = self.utils.settings['announcements']['media_channel']
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
+    @announcement.command(name='oehoe_channel')
+    async def set_oehoe_channel(self, context, channel: discord.TextChannel):
+        self.utils.settings['announcements']['oehoe_channel'] = channel.id
+        self.channels['oehoe_channel'] = self.utils.settings['announcements']['oehoe_channel']
+        self.utils.save_settings()
+        await context.message.add_reaction('\U0001F44D')
+
+    @announcement.command(name='oehoe_url')
+    async def set_oehoe_url(self, context, *, url: str):
+        self.utils.settings['announcements']['oehoe_url'] = url
+        self.channels['oehoe_url'] = self.utils.settings['announcements']['oehoe_url']
         self.utils.save_settings()
         await context.message.add_reaction('\U0001F44D')
 
@@ -186,6 +209,42 @@ class Announcements(commands.Cog):
                                 self.utils.save_settings()
 
                                 await asyncio.sleep(2)
+                if self.channels['oehoe_channel'] and self.oehoe_url:
+                    submission = self.reddit.submission(url=self.oehoe_url)
+                    submission.comment_sort = "new"
+                    submission.comment_limit = 5
+                    submission.comments.replace_more(limit=None)
+                    for comment in submission.comments.list():
+                        if comment.id not in self.comments:
+                            title = 'Nieuwe Oehoe van {}'.format(comment.author)
+
+                            link = comment.permalink
+
+                            parent = comment.parent_id
+                            parent_comment = None
+                            if parent.startswith('t1_'):
+                                parent_comment = self.reddit.comment(id=parent[2:])
+
+                            channel = self.bot.get_channel(self.channels['media_channel'])
+
+                            self.entries.append(submission.id)
+                            self.utils.settings['announcements']['entries'] = self.entries
+                            self.utils.save_settings()
+
+                            embed = discord.Embed(title=title,
+                                                  url=link,
+                                                  color=discord.Color(int('6E7B04', 16)))
+                            embed.add_field(name="Inhoud", value=comment.body)
+                            if parent_comment:
+                                embed.add_field(name="Als reactie op", value=parent_comment.body)
+
+                            self.comments.append(comment.id)
+                            self.utils.settings['announcements']['comments'] = self.comments
+                            self.utils.save_settings()
+
+                            await channel.send(embed=embed)
+
+
             except Exception:
                 pass
             await asyncio.sleep(10)
