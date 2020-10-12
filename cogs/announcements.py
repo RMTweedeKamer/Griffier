@@ -214,21 +214,21 @@ class Announcements(commands.Cog):
                 if self.channels['oehoe_channel'] and self.oehoe_url:
                     submission = self.reddit.submission(url=self.oehoe_url)
                     submission.comment_sort = "new"
-                    submission.comment_limit = 5
                     submission.comments.replace_more(limit=None)
-                    for comment in submission.comments.list():
+                    for comment in submission.comments.list()[-5:]:
                         if comment.id not in self.comments:
                             title = 'Nieuwe Oehoe van {}'.format(comment.author)
 
                             link = comment.permalink
 
-                            parent = comment.parent_id
+                            parent = str(comment.parent_id)
                             parent_comment = None
                             if parent.startswith('t1_'):
-                                parent_comment = self.reddit.comment(id=parent[2:])
+                                parent_comment = self.reddit.comment(id= parent[4:] )
 
                             channel = self.bot.get_channel(self.channels['oehoe_channel'])
 
+                            logging.debug(link)
                             embed = discord.Embed(title=title,
                                                   url=link,
                                                   color=discord.Color(int('6E7B04', 16)))
