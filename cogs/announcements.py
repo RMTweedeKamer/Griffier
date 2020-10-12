@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import re
 
 import praw
 import discord
@@ -213,23 +214,22 @@ class Announcements(commands.Cog):
                                 await asyncio.sleep(2)
                 if self.channels['oehoe_channel'] and self.oehoe_url:
                     submission = self.reddit.submission(url=self.oehoe_url)
-                    submission.comment_sort = "new"
+                    submission.comment_sort = "old"
                     submission.comments.replace_more(limit=None)
-                    for comment in submission.comments.list()[:5]:
+                    for comment in submission.comments.list()[-5:]:
                         if comment.id not in self.comments:
                             title = 'Nieuwe oehoe van {}'.format(comment.author)
 
                             link = 'https://reddit.com' + comment.permalink
 
-                            message = comment.body
-                            oehoeName = message.split()[0]
-                            message = message.split()[1:].replace(">", "")
+                            message = re.split("\s+|\n", comment.body, 1)
+                            oehoeName = message[0]
+                            message = message[1]
 
                             parent = str(comment.parent_id)
                             parent_comment = None
                             if parent.startswith('t1_'):
-                                logging.error(parent[4:])
-                                parent_comment = self.reddit.comment(id=parent[4:])
+                                parent_comment = self.reddit.comment(id=parent[3:])
 
                             channel = self.bot.get_channel(self.channels['oehoe_channel'])
 
@@ -242,11 +242,12 @@ class Announcements(commands.Cog):
                                                   color=discord.Color(int('0d5e13', 16)))
                             embed.set_thumbnail(url="https://i.imgur.com/LikPIj8.png")
                             embed.add_field(name="Gebruiker", value=oehoeName)
-                            embed.add_field(name="Inhoud", value=message)
+                            embed.add_field(name="Inhoud", value=message.replace(">", ""), inline=False)
                             if parent_comment is not None:
-                                embed.add_field(name="Reactie op", value=parent_comment.body.replace(">", ""))
+                                embed.add_field(name="Reactie op", value=parent_comment.body.replace(">", ""), inline=False)
 
                             await channel.send(embed=embed)
-            except Exception:
+            except Exception as e:
+                logging.error(e)
                 pass
             await asyncio.sleep(10)
