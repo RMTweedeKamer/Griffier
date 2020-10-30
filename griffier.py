@@ -147,7 +147,7 @@ if not os.path.exists('config.json'):
         reddit_client_secret = input('reddit client secret> ')
         host_id = input('member id of hoster> ')
         prefix = input('prefix> ')
-        config = json.dumps({'token': token, 'reddit_client_secret': reddit_client_secret, 'reddit_client_id': reddit_client_id,'host_id': host_id, 'prefix': prefix})
+        config = json.dumps({'token': token, 'reddit_client_secret': reddit_client_secret, 'reddit_client_id': reddit_client_id, 'host_id': host_id, 'prefix': prefix})
         f.write(config)
         f.close()
 
