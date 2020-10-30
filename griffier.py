@@ -177,7 +177,7 @@ bot.add_cog(Griffier(bot, host_id, utils))
 bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
-bot.add_cog(CustomChannels(bot, utils))
+bot.add_cog(CustomChannels(bot, utils, prefix))
 bot.add_cog(Announcements(bot, utils, reddit_client_id, reddit_client_secret))
 bot.add_cog(Greeter(bot, utils))
 bot.add_cog(Starboard(bot, utils))
