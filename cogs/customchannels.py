@@ -6,9 +6,10 @@ from datetime import datetime, timedelta
 # TODO
 
 class CustomChannels(commands.Cog):
-    def __init__(self, bot, utils):
+    def __init__(self, bot, utils, prefix):
         self.bot = bot
         self.utils = utils
+        self.prefix = prefix
 
         if 'custom_channels' not in self.utils.settings:
             self.utils.settings['custom_channels'] = {}
@@ -61,13 +62,29 @@ class CustomChannels(commands.Cog):
     @customchannel.command(name='list', aliases=['lijst'])
     async def customchannel_list_directory(self, context):
         '''Laat alle publieke kanalen zien'''
+        chunks = list(await self.utils.chunks(self.public_channels, 15))
+        n_chunk = 0
+        n_counter = 1
+        for channels in chunks:
+            n_chunk += 1
+            x_channels = ''
 
-        channels = '\n\n'
-        for channel in self.public_channels:
-            ch = self.bot.get_channel(channel)
-            channels += '{} ({})\n'.format(ch.mention, ch.id)
-        embed = discord.Embed(color=discord.Color.red(), description=channels, title='Alle publieke kanalen ({})'.format(len(self.public_channels)))
-        await context.send(embed=embed)
+            for channel in channels:
+                ch = self.bot.get_channel(channel)
+                x_channels += '{}. #{} ({} gebruiker{}) ({})\n'.format(n_counter, ch.name, len(ch.members), 's' if len(ch.members) > 1 else '', ch.id)
+                n_counter += 1
+            embed = discord.Embed(color=discord.Color.red(),
+                                  description='```markdown\n{}```\n\n **Betreed een kanaal: `{}cc join <kanaal-id>`**'.format(x_channels, self.prefix),
+                                  title='Publieke kanalen')
+            embed.set_footer(text='Kanalen {}/{}'.format(sum([len(i) for i in chunks[0:n_chunk]]), len(self.public_channels)))
+            await context.send(embed=embed)
+        # channels = '\n\n'
+        # for channel in self.public_channels:
+        #    ch = self.bot.get_channel(channel)
+        #    channels += '{} ({})\n'.format(ch.mention, ch.id)
+        # embed = discord.Embed(color=discord.Color.red(), description=channels, title='Alle publieke kanalen ({})'.format(len(self.public_channels)))
+        # embed.set_footer(text='')
+        # await context.send(embed=embed)
         # await context.message.add_reaction('\U0001F44D')
 
     @customchannel.command(name='join', aliases=['betreed'])

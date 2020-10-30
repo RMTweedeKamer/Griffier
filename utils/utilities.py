@@ -34,3 +34,11 @@ class Utils:
             await context.send_help(context.invoked_subcommand)
         else:
             await context.send_help(context.command)
+
+    async def chunks(self, l, n):
+        # For item i in a range that is a length of l,
+        x = []
+        for i in range(0, len(l), n):
+            # Create an index range for l of n items:
+            x.append(l[i:i+n])
+        return x

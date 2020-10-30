@@ -143,9 +143,11 @@ if not os.path.exists('data/settings.json'):
 if not os.path.exists('config.json'):
     with open('config.json', encoding='utf-8', mode='w') as f:
         token = input('token> ')
+        reddit_client_id = input('reddit client id> ')
+        reddit_client_secret = input('reddit client secret> ')
         host_id = input('member id of hoster> ')
         prefix = input('prefix> ')
-        config = json.dumps({'token': token, 'host_id': host_id, 'prefix': prefix})
+        config = json.dumps({'token': token, 'reddit_client_secret': reddit_client_secret, 'reddit_client_id': reddit_client_id,'host_id': host_id, 'prefix': prefix})
         f.write(config)
         f.close()
 
@@ -153,6 +155,8 @@ with open('config.json', encoding='utf-8', mode='r') as f:
         config = json.load(f)
 
 token = config['token']
+reddit_client_id = config['reddit_client_id']
+reddit_client_secret = config['reddit_client_secret']
 host_id = config['host_id']
 prefix = config['prefix']
 sentry = config['sentry']
@@ -172,8 +176,8 @@ bot.add_cog(Griffier(bot, host_id, utils))
 bot.add_cog(CommandErrorHandler(bot))
 
 # Laad cogs
-bot.add_cog(CustomChannels(bot, utils))
-bot.add_cog(Announcements(bot, utils))
+bot.add_cog(CustomChannels(bot, utils, prefix))
+bot.add_cog(Announcements(bot, utils, reddit_client_id, reddit_client_secret))
 bot.add_cog(Greeter(bot, utils))
 bot.add_cog(Starboard(bot, utils))
 bot.add_cog(Pinner(bot, utils))
