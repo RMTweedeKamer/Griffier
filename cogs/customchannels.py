@@ -71,6 +71,8 @@ class CustomChannels(commands.Cog):
 
             for channel in channels:
                 ch = self.bot.get_channel(channel)
+                if ch is None:
+                    continue
                 x_channels += '{}. #{} ({} gebruiker{}) ({})\n'.format(n_counter, ch.name, len(ch.members), 's' if len(ch.members) > 1 else '', ch.id)
                 n_counter += 1
             embed = discord.Embed(color=discord.Color.red(),
